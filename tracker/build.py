@@ -244,6 +244,10 @@ def collect_ova(cfg: dict, today: date) -> tuple[list[dict], list[str]]:
              "end": (date.fromisoformat(entry["date"]) + timedelta(days=1)).isoformat(),
              "links": {"ova": f"{ova_events.BASE}/event/show/{eid}"}}
         tier = entry.get("tier")
+        if not tier and entry.get("splits_posted"):
+            continue  # splits are out and we're not in any tier – not our tournament
+        if not tier and (cfg.get("ova_events") or {}).get("hide_until_splits", {}).get(age, False):
+            continue
         if tier:
             t.update({"division": tier["tier"], "venue": tier.get("venue"), "address": tier.get("address")})
             if tier.get("day"):
