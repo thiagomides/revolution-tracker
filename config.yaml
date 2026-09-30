@@ -43,7 +43,6 @@ ova_events:
   calendar_id: "3678344"          # from ontariovolleyball.org/event/show_month_list/3678344
   titles:
     - "^TLS Girls Division 1 "    # add "^15U Girls Division 1 " if the team also plays up in 15U
-    - "^15U Girls Division 2 "    # add "^15U Girls Division 1 " if the team also plays up in 15U
 
 # OVA team rankings (posted after each regular-season event)
 rankings:

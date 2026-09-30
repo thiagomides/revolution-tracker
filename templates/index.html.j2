@@ -133,6 +133,19 @@ details summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var
 .rank-meta { min-width: 0; display: grid; gap: 2px; }
 .rank-title { font-weight: 600; }
 .rank-sub { font-size: 13px; color: var(--muted); }
+.live { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--accent); border-radius: var(--radius); }
+.live-head { display: flex; align-items: center; gap: 8px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+@media (prefers-reduced-motion: no-preference) { .dot { animation: pulse 1.6s ease-in-out infinite; } @keyframes pulse { 50% { opacity: .3; } } }
+.live-big { font-family: var(--display); font-size: 26px; font-weight: 700; text-transform: var(--display-case); line-height: 1.1; }
+.scroll-x { overflow-x: auto; }
+.live .res { font-weight: 600; }
+.live .res.w { color: var(--ok); }
+.standings { width: 100%; border-collapse: collapse; font-size: 14px; }
+.standings caption { text-align: left; padding-bottom: 4px; }
+.standings th { text-align: left; font-size: 12px; color: var(--muted); font-weight: 600; padding: 4px 6px 4px 0; }
+.standings td { padding: 6px 6px 6px 0; border-top: 1px solid var(--line); white-space: nowrap; }
+.standings tr.me td { font-weight: 700; color: var(--accent); }
 footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-top: 1px solid var(--line); padding-top: 16px; }
 .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: 14px; }
 @media (max-width: 440px) { .item { grid-template-columns: 52px 1fr; gap: 10px; } .date .d { font-size: 24px; } }
@@ -194,12 +207,46 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
         <div><div class="label">Venue</div><div class="v">{{ n.venue or 'TBA' }}</div></div>
         <div><div class="label">Tier</div><div class="v">{{ n.division or 'Posted ~1 month before' }}</div></div>
       </div>
+      {%- if n.live %}
+      <div class="live">
+        <div class="live-head"><span class="dot" aria-hidden="true"></span><span class="label">Game day · updated {{ n.live_checked }}</span></div>
+        {%- if n.live.next %}
+        <div class="live-next">
+          <div class="label">Next match</div>
+          <div class="live-big">vs {{ n.live.next.opponent }}</div>
+          <div class="meta">{% if n.live.next.time %}<span class="num">{{ n.live.next.time }}</span>{% endif %}{% if n.live.next.court and n.live.next.court not in (n.live.next.time or '') %}<span>{{ n.live.next.court }}</span>{% endif %}<span>{{ n.live.next.round }}</span></div>
+        </div>
+        {%- endif %}
+        {%- if n.live.last %}
+        <div class="meta"><span class="label">Last</span><span class="res {{ 'w' if n.live.last.won }}">{{ n.live.last.label }} {{ n.live.last.score }}</span><span>vs {{ n.live.last.opponent }}</span><span class="num">({{ n.live.last.sets }})</span></div>
+        {%- endif %}
+        {%- if n.live.standings %}
+        <div class="scroll-x">
+        <table class="standings num">
+          <caption class="label">{{ n.live.pool }} · unofficial</caption>
+          <tr><th>Team</th><th>W</th><th>L</th><th>Sets</th><th>Pts</th></tr>
+          {%- for r in n.live.standings %}
+          <tr class="{{ 'me' if r.team == n.live.team }}"><td>{{ r.team }}</td><td>{{ r.w }}</td><td>{{ r.l }}</td><td>{{ r.sw }}-{{ r.sl }}</td><td>{{ r.pf }}-{{ r.pa }}</td></tr>
+          {%- endfor %}
+        </table>
+        </div>
+        {%- endif %}
+        <p class="lede">This page refreshes about every 10 minutes on tournament days. For up-to-the-second scores, use the timu buttons.</p>
+      </div>
+      {%- endif %}
       {{ matches_table(n) }}
       {%- if n.notes %}<div class="meta">{{ n.notes }}</div>{% endif %}
       <div class="btns">
         <a class="btn primary" href="{{ n._gcal }}" target="_blank" rel="noopener">{{ ico_cal }}Add to Google Calendar</a>
         <a class="btn" href="{{ n._ics }}">{{ ico_cal }}Apple / Outlook</a>
         {%- if n._map %}<a class="btn" href="{{ n._map }}" target="_blank" rel="noopener">{{ ico_pin }}Directions</a>{% endif %}
+        {%- if n.links.schedule and n.links.playoffs %}
+        <a class="btn" href="{{ n.links.schedule }}" target="_blank" rel="noopener">{{ ico_link }}Schedule</a>
+        <a class="btn" href="{{ n.links.results }}" target="_blank" rel="noopener">{{ ico_link }}Results</a>
+        <a class="btn" href="{{ n.links.playoffs }}" target="_blank" rel="noopener">{{ ico_link }}Playoffs</a>
+        <a class="btn" href="{{ n.links.pools }}" target="_blank" rel="noopener">{{ ico_link }}Pools</a>
+        {%- endif %}
+        {%- if n.links.ova %}<a class="btn" href="{{ n.links.ova }}" target="_blank" rel="noopener">{{ ico_link }}OVA event page</a>{% endif %}
         {%- if n.links.aes %}<a class="btn" href="{{ n.links.aes }}" target="_blank" rel="noopener">{{ ico_link }}Live scores (AES)</a>{% endif %}
       </div>
     </div>

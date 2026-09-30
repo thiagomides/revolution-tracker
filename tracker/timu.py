@@ -307,3 +307,102 @@ def upcoming_divisions(divisions: list[str], since: str) -> list[dict]:
     """Tournaments listed for our age groups where seeding isn't posted yet (so the team can't be matched)."""
     with httpx.Client(follow_redirects=True) as client:
         return [e for e in list_tournaments(client, divisions) if e["date"] >= since]
+
+
+# ------------------------------------------------------------------ game day
+def page_links(tid: str) -> dict:
+    """timu's own live pages for one tier – always the freshest source on game day."""
+    return {name: f"{BASE}/scoreboards/{name}.php?tid={tid}" for name in ("schedule", "results", "playoffs", "pools")}
+
+
+def parse_playoffs(page: str) -> list[dict]:
+    """Bracket boxes come as team-top / team-space-border (score) / team-bot, in that order."""
+    soup = BeautifulSoup(page, "html.parser")
+    seq = soup.find_all("div", class_=["team-top", "team-bot", "team-space-border"])
+    out, cur = [], {}
+    for d in seq:
+        cls = d.get("class") or []
+        txt = d.get_text(" ", strip=True).replace("\xa0", " ").strip()
+        if "team-top" in cls:
+            cur = {"top": txt, "score": "", "bot": ""}
+        elif "team-space-border" in cls and cur:
+            cur["score"] = txt
+        elif "team-bot" in cls and cur:
+            cur["bot"] = txt
+            out.append(cur)
+            cur = {}
+    return out
+
+
+def pool_standings(results: list[dict], pool: str) -> list[dict]:
+    """Unofficial standings from finished pool matches: wins, then set ratio, then point ratio."""
+    table: dict[str, dict] = {}
+    for r in results:
+        if not r["round"].lower().startswith(pool.lower()):
+            continue
+        a, b = r["teams"]
+        try:
+            sa, sb = int(a["sets_won"]), int(b["sets_won"])
+        except ValueError:
+            continue
+        pa = sum(int(x) for x in a["scores"] if x.isdigit())
+        pb = sum(int(x) for x in b["scores"] if x.isdigit())
+        for me, them, s_me, s_them, p_me, p_them in ((a, b, sa, sb, pa, pb), (b, a, sb, sa, pb, pa)):
+            row = table.setdefault(me["name"], {"team": me["name"], "w": 0, "l": 0, "sw": 0, "sl": 0, "pf": 0, "pa": 0})
+            row["w"] += s_me > s_them
+            row["l"] += s_me < s_them
+            row["sw"] += s_me
+            row["sl"] += s_them
+            row["pf"] += p_me
+            row["pa"] += p_them
+    rows = list(table.values())
+    rows.sort(key=lambda r: (-r["w"], -(r["sw"] / max(r["sl"], 1)), -(r["pf"] / max(r["pa"], 1))))
+    return rows
+
+
+def game_day(tid: str, sched: dict, results: list[dict], playoffs: list[dict], aliases: list[str]) -> dict | None:
+    """What a parent at the gym wants: our pool table, the last result, and who/where we play next."""
+    seed = find_team(sched["seeds"], aliases)
+    if not seed:
+        return None
+    me_name = sched["seeds"][seed]
+    me = _norm(me_name)
+    mine = [r for r in results if any(_norm(t["name"]) == me for t in r["teams"])]
+    pool = next((r["round"] for r in mine if r["round"].lower().startswith("pool")), None)
+
+    last = None
+    if mine:
+        r = mine[-1]
+        us = next(t for t in r["teams"] if _norm(t["name"]) == me)
+        them = next(t for t in r["teams"] if t is not us)
+        last = {"opponent": them["name"], "round": r["round"], "court": r["court"],
+                "score": f"{us['sets_won']}-{them['sets_won']}",
+                "sets": ", ".join(f"{a}-{b}" for a, b in zip(us["scores"], them["scores"])),
+                "won": str(us["sets_won"]).isdigit() and str(them["sets_won"]).isdigit()
+                       and int(us["sets_won"]) > int(them["sets_won"])}
+        last["label"] = "W" if last["won"] else ("Split" if us["sets_won"] == them["sets_won"] else "L")
+
+    # Next match: first pool-grid game of ours without a result, else an unscored bracket game of ours
+    played = {_norm(t["name"]) for r in mine if r["round"].lower().startswith("pool") for t in r["teams"]} - {me}
+    nxt = None
+    for i, g in enumerate(sched["grid"]):
+        if seed not in (g["a"], g["b"]):
+            continue
+        opp = sched["seeds"].get(g["b"] if g["a"] == seed else g["a"], "TBD")
+        if _norm(opp) in played:
+            continue
+        pos = sum(1 for h in sched["grid"][:i + 1] if h["court"] == g["court"])
+        nxt = {"opponent": opp, "court": g["court"], "round": "Pool play",
+               "time": g["time"] or f"Match {pos} on {g['court']}"}
+        break
+    if not nxt:
+        for m in playoffs:
+            names = (_norm(m["top"]), _norm(m["bot"]))
+            if me in names and not re.search(r"\d", m["score"]):
+                opp = m["bot"] if names[0] == me else m["top"]
+                nxt = {"opponent": opp or "winner of another match", "court": "", "round": "Playoffs", "time": ""}
+                break
+
+    return {"team": me_name, "pool": pool,
+            "standings": pool_standings(results, pool) if pool else [],
+            "last": last, "next": nxt, "links": page_links(tid)}

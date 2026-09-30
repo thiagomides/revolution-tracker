@@ -105,7 +105,7 @@ def collect_timu(cfg: dict, today: date) -> tuple[list[dict], list[str], list[di
     aliases = cfg["team"].get("aliases") or [cfg["team"]["name"]]
     warnings: list[str] = []
     upcoming: list[dict] = []
-    offline = os.environ.get("OFFLINE") == "1"
+    offline = skip_full_refresh()
 
     if not offline:
         import httpx
@@ -179,6 +179,45 @@ def collect_timu(cfg: dict, today: date) -> tuple[list[dict], list[str], list[di
     return team, warnings, []  # the "other events in our age group" list is no longer shown
 
 
+def skip_full_refresh() -> bool:
+    """OFFLINE=1: use saved data only. LIVE_ONLY=1 (game-day runs every ~10 min): refresh only today's tournament."""
+    return os.environ.get("OFFLINE") == "1" or os.environ.get("LIVE_ONLY") == "1"
+
+
+def add_live(ts: list[dict], cfg: dict, today: date) -> int:
+    """Game day: pull timu's live pages for today's tournament. Returns how many were refreshed."""
+    aliases = cfg["team"].get("aliases") or [cfg["team"]["name"]]
+    refreshed = 0
+    for t in ts:
+        tid = t.get("timu_tid") or (t["id"][5:] if str(t["id"]).startswith("timu-") else None)
+        if not tid:
+            continue
+        t["links"].update({k: v for k, v in timu.page_links(tid).items() if k not in t["links"]})
+        if not (t["_start"] <= today <= t["_end"]) or os.environ.get("OFFLINE") == "1":
+            continue
+        import httpx
+        with httpx.Client(follow_redirects=True) as client:
+            sp = timu._get(client, f"{timu.BASE}/scoreboards/schedule.php?tid={tid}")
+            rp = timu._get(client, f"{timu.BASE}/scoreboards/results.php?tid={tid}") or ""
+            pp = timu._get(client, f"{timu.BASE}/scoreboards/playoffs.php?tid={tid}") or ""
+        if not sp:
+            continue
+        try:
+            sched, results = timu.parse_schedule(sp), (timu.parse_results(rp) if rp else [])
+            bracket = timu.parse_playoffs(pp) if pp else []
+            view = timu.team_view(tid, sched, results, aliases)
+            if view:
+                for k in ("matches", "placement", "first_match"):
+                    if view.get(k):
+                        t[k] = view[k]
+            t["live"] = timu.game_day(tid, sched, results, bracket, aliases)
+            t["live_checked"] = datetime.now(ZoneInfo(cfg["site"]["timezone"])).strftime("%-I:%M %p")
+            refreshed += 1
+        except Exception as ex:
+            log.warning("game-day parse failed for tid %s: %s", tid, ex)
+    return refreshed
+
+
 def is_regular(title: str) -> bool:
     t = title.lower()
     return any(c.lower() in t for c in ova_events.REGULAR_CUPS) and "non-ova" not in t and "exhibition" not in t
@@ -193,7 +232,7 @@ def collect_ova(cfg: dict, today: date) -> tuple[list[dict], list[str]]:
     aliases = cfg["team"].get("aliases") or [cfg["team"]["name"]]
     season_start = str((cfg.get("timu") or {}).get("season_start", f"{today.year}-09-01"))
     warnings: list[str] = []
-    if os.environ.get("OFFLINE") != "1":
+    if not skip_full_refresh():
         import httpx
         with httpx.Client(follow_redirects=True) as client:
             events = ova_events.list_events(client, str(oc.get("calendar_id")), season_start, oc.get("titles") or [])
@@ -276,7 +315,7 @@ def collect_rankings(cfg: dict, tz: ZoneInfo) -> tuple[dict, list[str], list[str
     if not rc.get("enabled", True):
         return {}, [], []
     warnings, changes = [], []
-    if os.environ.get("OFFLINE") != "1":
+    if not skip_full_refresh():
         aliases = cfg["team"].get("aliases") or [cfg["team"]["name"]]
         fresh, err = rankings.fetch(aliases)
         if err:
@@ -532,6 +571,17 @@ def main() -> int:
         t["_ics"] = f"events/{t['id']}.ics"
     ts.sort(key=lambda t: t["_start"])
 
+    live_count = add_live(ts, cfg, today)
+    if os.environ.get("LIVE_ONLY") == "1" and not live_count:
+        log.info("Game-day run: no tournament today – nothing to publish.")
+        if os.environ.get("GITHUB_OUTPUT"):
+            with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                f.write("publish=false\n")
+        return 0
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            f.write("publish=true\n")
+
     if not ts and not div_events:
         log.error("No tournaments found at all – refusing to publish an empty site (keeping the last one).")
         return 1
@@ -581,7 +631,8 @@ def main() -> int:
         log.warning(w)
     if changes:
         log.info("Changes detected:\n  " + "\n  ".join(changes))
-        send_alert(changes, cfg, digest_text)
+        if os.environ.get("LIVE_ONLY") != "1":  # no email per score update on game day
+            send_alert(changes, cfg, digest_text)
     log.info("Built %d tournaments → %s", len(ts), SITE)
     return 0
 
