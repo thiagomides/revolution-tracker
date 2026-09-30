@@ -32,6 +32,19 @@ timu:
   show_results_from: "2025-09-01"  # past results shown on the page from this date
   delay_seconds: 0.5             # pause between page requests (be polite)
 
+# ------------------------------------------------------------------
+# OVA events calendar – the tournaments we are registered for.
+# Only regular-season cups (Provincial, Challenge, McGregor, Bugarski, Furlani)
+# whose title matches one of these patterns. Exhibitions and Non-OVA events are ignored.
+# Each event page is opened to find the one tier (e.g. "Trillium I") we play in.
+# ------------------------------------------------------------------
+ova_events:
+  enabled: true
+  calendar_id: "3678344"          # from ontariovolleyball.org/event/show_month_list/3678344
+  titles:
+    - "^TLS Girls Division 1 "    # add "^15U Girls Division 1 " if the team also plays up in 15U
+    - "^TLS Girls Division 2 "    # add "^15U Girls Division 1 " if the team also plays up in 15U
+
 # OVA team rankings (posted after each regular-season event)
 rankings:
   enabled: true

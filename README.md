@@ -60,11 +60,14 @@ GitHub Actions (every 3 h; hourly on weekends)
        ├─ tracker/timu.py   timu.ca/ova/index.php   → list of 15U/TLS Girls divisions + dates
        │                    scoreboards/schedule.php → venue, address, start time, seeds, time×court grid
        │                    scoreboards/results.php  → scores, playoff rounds → placement
+       ├─ tracker/ova_events.py OVA events calendar → our regular-season TLS D1 cups → our tier, day, venue, timu link
        ├─ tracker/rankings.py ontariovolleyball.org/girls-team-rankings → our rank, table by table
        ├─ data/tournaments.yaml  (hand-entered extras)
        ├─ tracker/aes.py         (optional, Ontario Championships on AES)
        └─ writes site/: index.html · schedule.ics · events/*.ics · data.json · digest.txt
 ```
+
+**Only our tournaments.** The OVA events calendar lists every competition. The tool keeps only regular-season cups whose title matches `ova_events.titles` in `config.yaml` (default: TLS Girls Division 1). It opens each event page and shows only the tier Revolution Force is in, such as "Trillium I", with its day and venue. Exhibitions, Non-OVA events and other tiers are never shown. Until OVA posts the team splits, about a month before each event, the page shows "Sat or Sun" and "Tier: posted ~1 month before".
 
 **Seeding timing.** OVA usually posts divisions about a week before each event. Until then, the page shows "Waiting for OVA seeding" along with the upcoming 15U and TLS dates. As soon as Revolution Force appears in a division, the tournament is added.
 

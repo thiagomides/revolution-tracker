@@ -22,7 +22,7 @@ import yaml
 from icalendar import Alarm, Calendar, Event
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from tracker import aes, rankings, timu
+from tracker import aes, ova_events, rankings, timu
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "site"
@@ -30,6 +30,7 @@ DATA = ROOT / "data"
 CACHE = DATA / "aes_cache.json"     # last good AES result per tournament
 STATE = DATA / "last_build.json"    # previous build, for change detection
 RANK_CACHE = DATA / "rankings_cache.json"  # last good OVA ranking for our team
+OVA_CACHE = DATA / "ova_cache.json"  # {event_id: {title, date, tier, team}} from the OVA calendar
 TIMU_CACHE = DATA / "timu_cache.json"  # {tid: tournament|null}; null = our team not in that division
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
@@ -116,6 +117,8 @@ def collect_timu(cfg: dict, today: date) -> tuple[list[dict], list[str], list[di
             for e in events:
                 if e["date"] < tc.get("season_start", "1900-01-01"):
                     continue
+                if not is_regular(e["title"]):
+                    continue  # skip Non-OVA / exhibition events – the team only plays regular-season cups
                 cached = cache.get(e["tid"], "missing")
                 # Re-check: anything upcoming or within 3 days (results, reseeding); fetch older ones once.
                 if cached != "missing" and e["date"] < recheck_from:
@@ -172,7 +175,94 @@ def collect_timu(cfg: dict, today: date) -> tuple[list[dict], list[str], list[di
         seen.add(key)
         div_events.append({"date": e["date"], "name": base,
                            "label": date.fromisoformat(e["date"]).strftime("%a %b %-d")})
-    return team, warnings, div_events[:8]
+    team = [t for t in team if is_regular(t.get("name", "") + " " + str(t.get("division", "")))]
+    return team, warnings, []  # the "other events in our age group" list is no longer shown
+
+
+def is_regular(title: str) -> bool:
+    t = title.lower()
+    return any(c.lower() in t for c in ova_events.REGULAR_CUPS) and "non-ova" not in t and "exhibition" not in t
+
+
+def collect_ova(cfg: dict, today: date) -> tuple[list[dict], list[str]]:
+    """Our regular-season tournaments from the OVA calendar, showing only the tier we play in."""
+    oc = cfg.get("ova_events") or {}
+    if not oc.get("enabled"):
+        return [], []
+    cache: dict = json.loads(OVA_CACHE.read_text()) if OVA_CACHE.exists() else {}
+    aliases = cfg["team"].get("aliases") or [cfg["team"]["name"]]
+    season_start = str((cfg.get("timu") or {}).get("season_start", f"{today.year}-09-01"))
+    warnings: list[str] = []
+    if os.environ.get("OFFLINE") != "1":
+        import httpx
+        with httpx.Client(follow_redirects=True) as client:
+            events = ova_events.list_events(client, str(oc.get("calendar_id")), season_start, oc.get("titles") or [])
+            if not events:
+                warnings.append("Couldn't read the OVA events calendar – showing last saved tournaments")
+            for e in events:
+                old = cache.get(e["id"]) or {}
+                done = old.get("team") and old["team"].get("placement")
+                if done and e["date"] < (today - timedelta(days=3)).isoformat():
+                    continue  # finished and recorded – no need to fetch again
+                entry = {**old, "title": e["title"], "date": e["date"]}
+                page = ova_events._get(client, f"{ova_events.BASE}/event/show/{e['id']}")
+                time.sleep(0.5)
+                if page:
+                    try:
+                        parsed = ova_events.parse_event(page, aliases, e["date"])
+                        entry["splits_posted"] = parsed["splits_posted"]
+                        if parsed["tier"]:
+                            entry["tier"] = parsed["tier"]
+                    except Exception as ex:
+                        log.warning("OVA event parse failed for %s: %s", e["id"], ex)
+                tid = (entry.get("tier") or {}).get("timu_tid")
+                if tid:
+                    sched_page = timu._get(client, f"{timu.BASE}/scoreboards/schedule.php?tid={tid}")
+                    res_page = timu._get(client, f"{timu.BASE}/scoreboards/results.php?tid={tid}") or ""
+                    if sched_page:
+                        try:
+                            view = timu.team_view(tid, timu.parse_schedule(sched_page),
+                                                  timu.parse_results(res_page) if res_page else [], aliases)
+                            if view:
+                                entry["team"] = view
+                        except Exception as ex:
+                            log.warning("timu parse failed for tid %s: %s", tid, ex)
+                cache[e["id"]] = entry
+            if events:
+                cache["_listed"] = [e["id"] for e in events]
+        OVA_CACHE.write_text(json.dumps(cache, indent=2))
+
+    listed = set(cache.get("_listed") or [k for k in cache if not k.startswith("_")])
+    out = []
+    for eid, entry in cache.items():
+        if eid.startswith("_") or eid not in listed or entry.get("date", "") < season_start:
+            continue
+        title = ova_events.clean_title(entry["title"])
+        age = title.split()[0]
+        name = title.replace(" Division 1 ", " D1 ").replace(" Division 2 ", " D2 ")
+        t = {"id": f"ova-{eid}", "name": name, "age_group": age, "start": entry["date"],
+             "end": (date.fromisoformat(entry["date"]) + timedelta(days=1)).isoformat(),
+             "links": {"ova": f"{ova_events.BASE}/event/show/{eid}"}}
+        tier = entry.get("tier")
+        if tier:
+            t.update({"division": tier["tier"], "venue": tier.get("venue"), "address": tier.get("address")})
+            if tier.get("day"):
+                t["start"] = t["end"] = tier["day"]
+            if tier.get("timu_tid"):
+                t["links"]["schedule"] = f"{timu.BASE}/scoreboards/schedule.php?tid={tier['timu_tid']}"
+                t["timu_tid"] = tier["timu_tid"]
+        else:
+            t["tier_pending"] = True
+            t["notes"] = ("Tier, day (Sat or Sun) and venue will appear here once OVA posts the team splits, "
+                          "usually about a month before.")
+        team = entry.get("team")
+        if team:
+            for k in ("matches", "placement", "first_match"):
+                if team.get(k):
+                    t[k] = team[k]
+            t["links"]["results"] = team.get("links", {}).get("results")
+        out.append(t)
+    return out, warnings
 
 
 def collect_rankings(cfg: dict, tz: ZoneInfo) -> tuple[dict, list[str], list[str]]:
@@ -202,8 +292,10 @@ def collect_rankings(cfg: dict, tz: ZoneInfo) -> tuple[dict, list[str], list[str
     entries = sorted(cached.get("entries", []), key=lambda e: (e["age_group"] not in mine, e["age_group"]))
     y = int(str((cfg.get("timu") or {}).get("season_start", "2026"))[:4])
     season_rx = re.compile(rf"{y}\s*[-/]\s*(20)?{(y + 1) % 100:02d}")
+    prev_rx = re.compile(rf"{y - 1}\s*[-/]\s*(20)?{y % 100:02d}")
     for e in entries:
-        e["current"] = bool(season_rx.search(e["title"]))
+        # Current if it names this season, or it's one of our divisions and doesn't name last season
+        e["current"] = bool(season_rx.search(e["title"])) or (e["age_group"] in mine and not prev_rx.search(e["title"]))
     has_current = any(e["current"] and e["age_group"] in mine for e in entries)
     season = f"{y}-{(y + 1) % 100:02d}"
     return {**cached, "entries": entries, "mine": mine, "has_current": has_current, "season": season}, warnings, changes
@@ -412,6 +504,14 @@ def main() -> int:
         ts[:] = [m for m in ts if not (str(m["start"]) == t["start"] and m.get("age_group") == t.get("age_group"))]
         t["placement_manual"] = False
         ts.append(t)
+    ova_ts, ova_warn = collect_ova(cfg, today)
+    warnings += ova_warn
+    for t in ova_ts:
+        # One entry per tournament: drop the timu-scan copy of the same tier, and any hand entry that day
+        ts[:] = [m for m in ts if m["id"] != f"timu-{t.get('timu_tid')}"
+                 and not (m.get("source") != "timu" and str(m["start"]) == t["start"] and m.get("age_group") == t["age_group"])]
+        t["placement_manual"] = False
+        ts.append(t)
     warnings += merge_aes(ts, cfg)
 
     for t in ts:
@@ -419,6 +519,8 @@ def main() -> int:
         e = date.fromisoformat(str(t.get("end") or t["start"]))
         t["_start"], t["_end"] = s, e
         t["_date_label"] = date_label(s, e)
+        if t.get("tier_pending") and (e - s).days == 1:
+            t["_date_label"] = f"{s.strftime('%a %b %-d')} or {e.strftime('%a %b %-d')}"
         t["_status"] = "past" if e < today else ("live" if s <= today <= e else "upcoming")
         t["_days_until"] = (s - today).days
         t["_gcal"] = gcal_link(t, cfg, tz)

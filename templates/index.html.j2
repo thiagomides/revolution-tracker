@@ -192,7 +192,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
         <div><div class="label">Date</div><div class="v">{{ n._date_label }}</div></div>
         <div><div class="label">First match</div><div class="v num">{{ n.first_match or 'Posted ~1 week before' }}</div></div>
         <div><div class="label">Venue</div><div class="v">{{ n.venue or 'TBA' }}</div></div>
-        <div><div class="label">Division</div><div class="v">{{ n.age_group }}{% if n.division %} · {{ n.division }}{% endif %}</div></div>
+        <div><div class="label">Tier</div><div class="v">{{ n.division or 'Posted ~1 month before' }}</div></div>
       </div>
       {{ matches_table(n) }}
       {%- if n.notes %}<div class="meta">{{ n.notes }}</div>{% endif %}

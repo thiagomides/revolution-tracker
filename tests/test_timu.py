@@ -46,3 +46,10 @@ def test_other_team_not_matched():
 if __name__ == "__main__":
     test_schedule_header(); test_team_view(); test_other_team_not_matched()
     print("all timu tests passed")
+
+
+def test_index_unclosed_optgroups():
+    # Real timu markup never closes <optgroup>; each option must keep its own date.
+    events = timu.parse_index((FIX / "index_sample.html").read_text(), ["15UG", "TLSG"])
+    by_tid = {e["tid"]: e["date"] for e in events}
+    assert by_tid == {"4178": "2026-10-03", "4171": "2026-09-26", "4154": "2026-04-11", "3890": "2026-02-21"}
