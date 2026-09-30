@@ -1,0 +1,23 @@
+# ------------------------------------------------------------------
+# Hand-entered events (optional).
+#
+# Regular-season OVA tournaments are found automatically on timu.ca.
+# Use this file only for things timu doesn't list: exhibitions, Ontario
+# Championships, practices, team events, or a tournament you know about
+# before seeding is posted. An entry with the same date and name as a
+# timu tournament is replaced by the timu data automatically.
+# ------------------------------------------------------------------
+
+tournaments: []
+
+# Example:
+#  - id: "2027-04-ontario-championships"
+#    name: "15U Girls Ontario Championships"
+#    age_group: "15U"
+#    start: "2027-04-24"
+#    end: "2027-04-26"
+#    venue: "EY Centre"
+#    address: "4899 Uplands Dr, Ottawa, ON"
+#    notes: "Hotel block info from the coach."
+#    links:
+#      ova: "https://www.ontariovolleyball.org/ocs-schedules"

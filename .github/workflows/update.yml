@@ -1,0 +1,62 @@
+name: Update schedule
+
+on:
+  schedule:
+    # Times are UTC (Toronto = UTC-4 in summer/fall, UTC-5 in winter)
+    - cron: "17 */3 * * *"          # every 3 hours, all week
+    - cron: "7 11-23 * * 6,0"       # hourly on Sat/Sun, ~7am–7pm Toronto (tournament days)
+  push:
+    branches: [main]                # rebuild right after you edit config or tournaments
+  workflow_dispatch:                # "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write                   # save the cache back to the repo
+  pages: write
+  id-token: write
+
+concurrency:
+  group: schedule
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt pytest
+
+      - name: Parser tests (stop before publishing if timu.ca parsing broke)
+        run: python -m pytest -q tests
+
+      - name: Build site
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        run: python -m tracker.build
+
+      - name: Save cache
+        run: |
+          git config user.name "schedule-bot"
+          git config user.email "schedule-bot@users.noreply.github.com"
+          git add data/*.json
+          git diff --cached --quiet || git commit -m "Update schedule cache [skip ci]"
+          git push || echo "push skipped"
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,49 @@
+# ------------------------------------------------------------------
+# Markham Revolution Force – schedule tracker configuration
+# Edit this file on GitHub (pencil icon) – the site rebuilds automatically.
+# ------------------------------------------------------------------
+
+team:
+  name: "Markham Revolution Force"
+  short_name: "Revolution Force"
+  # Exact name(s) used on timu.ca seeding lists. Matching ignores case/spaces.
+  # Keep these specific: "Revolution" alone would also match Rush, Flash, Rumble…
+  aliases:
+    - "Markham Revolution Force"
+
+site:
+  title: "Revolution Force – Tournament Schedule"
+  # Public URL once GitHub Pages is on (used in share messages + calendar link)
+  base_url: "https://thiagomides.github.io/revolution-tracker/"
+  # Default look: "sport" (Court) | "clean" | "night"   – visitors can still switch
+  theme: "sport"
+  timezone: "America/Toronto"
+
+# ------------------------------------------------------------------
+# Source: OVA Tourney app on timu.ca (https://timu.ca/ova/index.php)
+# The tool reads every division page for these competitions and keeps the
+# ones where our team is seeded. Seeding usually appears ~1 week before.
+# Codes are the ones in timu's filter menu: 15UG, TLSG, 16UG, …
+# ------------------------------------------------------------------
+timu:
+  enabled: true
+  divisions: ["15UG", "TLSG"]
+  season_start: "2026-09-01"     # ignore older events (keeps the scan fast)
+  show_results_from: "2025-09-01"  # past results shown on the page from this date
+  delay_seconds: 0.5             # pause between page requests (be polite)
+
+# OVA team rankings (posted after each regular-season event)
+rankings:
+  enabled: true
+  url: "https://www.ontariovolleyball.org/girls-team-rankings"
+
+# Optional: extra events typed by hand (exhibitions, Ontario Championships, etc.)
+# live in data/tournaments.yaml.
+
+# Optional: AES links (used for Ontario Championships in April). See README.
+aes_team_links: []
+
+alerts:
+  # Email on changes (optional). Requires SMTP secrets in GitHub – see README.
+  email_enabled: false
+  to: []   # e.g. ["team-parents@googlegroups.com"]
