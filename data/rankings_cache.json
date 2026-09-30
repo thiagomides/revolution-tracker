@@ -1,0 +1,24 @@
+{
+  "entries": [
+    {
+      "age_group": "6v6 Girls",
+      "title": "Post Ontario Championships Rankings 2025-2026",
+      "rank": "59",
+      "of": 184,
+      "detail": {
+        "Pre OC Rank": "39"
+      }
+    }
+  ],
+  "splits": [
+    {
+      "label": "15U Girls Division Split - 2026/27",
+      "url": "https://cdn2.sportngin.com/attachments/document/07e8-3572291/15UG_Division_Split_Draft_26-27.pdf"
+    },
+    {
+      "label": "16U Girls Division Split - 2026/27",
+      "url": "https://cdn3.sportngin.com/attachments/document/cccc-3572292/16UG_Division_Split_Draft_26-27.pdf"
+    }
+  ],
+  "fetched": "Sep 30, 2026"
+}
