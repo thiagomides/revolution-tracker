@@ -1,5 +1,52 @@
 {
-  "588428285": {"title": "TLS Girls Division 1 Provincial Cup (Sat OR Sun)", "date": "2026-11-14", "splits_posted": false},
-  "588431221": {"title": "TLS Girls Division 1 Challenge Cup (Sat OR Sun)", "date": "2026-12-12", "splits_posted": false},
-  "_listed": ["588428285", "588431221"]
+  "588428285": {
+    "title": "TLS Girls Division 1 Provincial Cup (Sat OR Sun)",
+    "date": "2026-11-14",
+    "splits_posted": false
+  },
+  "588431221": {
+    "title": "TLS Girls Division 1 Challenge Cup (Sat OR Sun)",
+    "date": "2026-12-12",
+    "splits_posted": false
+  },
+  "_listed": [
+    "588428285",
+    "588428290",
+    "588431221",
+    "588431224",
+    "588443014",
+    "588443015",
+    "588444301",
+    "588444317"
+  ],
+  "588428290": {
+    "title": "TLS Girls Division 2 Provincial Cup (Sat OR Sun)",
+    "date": "2026-11-14",
+    "splits_posted": false
+  },
+  "588431224": {
+    "title": "TLS Girls Division 2 Challenge Cup (Sat Or Sun)",
+    "date": "2026-12-12",
+    "splits_posted": false
+  },
+  "588443014": {
+    "title": "TLS Girls Division 1 McGregor Cup (Sat OR Sun)",
+    "date": "2027-01-23",
+    "splits_posted": false
+  },
+  "588443015": {
+    "title": "TLS Girls Division 2 McGregor Cup (Sat OR Sun)",
+    "date": "2027-01-23",
+    "splits_posted": false
+  },
+  "588444301": {
+    "title": "TLS Girls Division 1 Bugarski Cup (Sat OR Sun)",
+    "date": "2027-02-20",
+    "splits_posted": false
+  },
+  "588444317": {
+    "title": "TLS Girls Division 2 Bugarski Cup (Sat OR Sun)",
+    "date": "2027-02-20",
+    "splits_posted": false
+  }
 }
