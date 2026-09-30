@@ -1,15 +1,10 @@
 {
-  "3319": {
-    "id": "timu-3319",
-    "name": "TLS Girls Provincial Cup",
-    "age_group": "TLS",
-    "division": "Trillium I",
+  "timu-3319": {
     "start": "2025-11-15",
     "end": "2025-11-15",
     "first_match": "09:00",
     "venue": "Huron Heights SS",
     "address": "40 Huron Heights Dr, Newmarket, ON L3Y 3J9",
-    "team_seed": "Markham Revolution Force",
     "placement": "3rd (Trillium I)",
     "matches": [
       {
@@ -52,24 +47,14 @@
         "role": "play",
         "result": "W 2-1"
       }
-    ],
-    "links": {
-      "schedule": "https://timu.ca/scoreboards/schedule.php?tid=3319",
-      "results": "https://timu.ca/scoreboards/results.php?tid=3319"
-    },
-    "source": "timu"
+    ]
   },
-  "3515": {
-    "id": "timu-3515",
-    "name": "TLS Girls Challenge Cup",
-    "age_group": "TLS",
-    "division": "Trillium C",
+  "timu-3515": {
     "start": "2025-12-13",
     "end": "2025-12-13",
     "first_match": "09:00",
     "venue": "Richmond Hill HS",
     "address": "201 Yorkland St, Richmond Hill, ON L4S 1A2",
-    "team_seed": "Markham Revolution Force",
     "placement": "1st (Trillium C)",
     "matches": [
       {
@@ -112,24 +97,14 @@
         "role": "play",
         "result": "W 2-0"
       }
-    ],
-    "links": {
-      "schedule": "https://timu.ca/scoreboards/schedule.php?tid=3515",
-      "results": "https://timu.ca/scoreboards/results.php?tid=3515"
-    },
-    "source": "timu"
+    ]
   },
-  "3810": {
-    "id": "timu-3810",
-    "name": "TLS Girls McGregor Cup",
-    "age_group": "TLS",
-    "division": "Trillium I",
+  "timu-3810": {
     "start": "2026-01-24",
     "end": "2026-01-24",
     "first_match": "09:00",
     "venue": "Huron Heights SS",
     "address": "40 Huron Heights Dr, Newmarket, ON L3Y 3J9",
-    "team_seed": "Markham Revolution Force",
     "placement": "2nd (Trillium I)",
     "matches": [
       {
@@ -188,21 +163,6 @@
         "role": "play",
         "result": "L 0-2"
       }
-    ],
-    "links": {
-      "schedule": "https://timu.ca/scoreboards/schedule.php?tid=3810",
-      "results": "https://timu.ca/scoreboards/results.php?tid=3810"
-    },
-    "source": "timu"
-  },
-  "4178": null,
-  "_upcoming": [
-    {
-      "tid": "4178",
-      "title": "15U Girls Non-OVA Select G",
-      "date": "2026-10-03"
-    }
-  ],
-  "4171": null,
-  "4177": null
+    ]
+  }
 }
