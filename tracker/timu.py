@@ -50,23 +50,34 @@ def list_tournaments(client: httpx.Client, divisions: list[str]) -> list[dict]:
     page = _get(client, INDEX)
     if not page:
         return []
-    soup = BeautifulSoup(page, "html.parser")
-    sel = soup.find("select", id="tournament")
-    if not sel:
+    return parse_index(page, divisions)
+
+
+_TOKEN = re.compile(r"<optgroup\s+label=['\"]([^'\"]*)['\"]|<option[^>]*value=['\"](\d+)['\"][^>]*>([^<]*)", re.I)
+
+
+def parse_index(page: str, divisions: list[str]) -> list[dict]:
+    """timu leaves every <optgroup> unclosed, so HTML parsers nest them all inside the first
+    date. Read the tags in document order instead: each option belongs to the latest date label."""
+    start = max(page.find('id="tournament"'), page.find("id='tournament'"))
+    if start < 0:
         log.warning("timu index: tournament list not found (page layout changed?)")
         return []
+    end = page.find("</select>", start)
+    chunk = page[start:end if end > 0 else None]
     prefixes = tuple(DIVISION_PREFIX.get(d, d) for d in divisions)
-    out = []
-    for group in sel.find_all("optgroup"):
-        label = group.get("label", "").strip("—  ")
-        try:
-            d = datetime.strptime(label, "%A %B %d, %Y").date()
-        except ValueError:
+    out, current = [], None
+    for label, tid, title in _TOKEN.findall(chunk):
+        if label:
+            text = htmllib.unescape(label).strip("\u2014 \u00a0")
+            try:
+                current = datetime.strptime(text, "%A %B %d, %Y").date()
+            except ValueError:
+                current = None
             continue
-        for opt in group.find_all("option"):
-            title = opt.get_text(strip=True)
-            if title.startswith(prefixes) and opt.get("value", "").isdigit():
-                out.append({"tid": opt["value"], "title": title, "date": d.isoformat()})
+        title = htmllib.unescape(title).strip()
+        if current and tid and title.startswith(prefixes):
+            out.append({"tid": tid, "title": title, "date": current.isoformat()})
     return out
 
 
