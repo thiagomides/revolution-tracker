@@ -115,7 +115,9 @@ def collect_timu(cfg: dict, today: date) -> tuple[list[dict], list[str], list[di
                 warnings.append("Couldn't read the tournament list on timu.ca – showing last saved data")
             recheck_from = (today - timedelta(days=3)).isoformat()
             for e in events:
-                if e["date"] < tc.get("season_start", "1900-01-01"):
+                # Scan back to show_results_from so past results can be (re)built; each old
+                # event is downloaded once, then remembered in the cache.
+                if e["date"] < (tc.get("show_results_from") or tc.get("season_start") or "1900-01-01"):
                     continue
                 if not is_regular(e["title"]):
                     continue  # skip Non-OVA / exhibition events – the team only plays regular-season cups
