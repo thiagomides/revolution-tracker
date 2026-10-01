@@ -1,23 +1,22 @@
 # ------------------------------------------------------------------
 # Hand-entered events (optional).
 #
-# Regular-season OVA tournaments are found automatically on timu.ca.
-# Use this file only for things timu doesn't list: exhibitions, Ontario
-# Championships, practices, team events, or a tournament you know about
-# before seeding is posted. An entry with the same date and name as a
-# timu tournament is replaced by the timu data automatically.
+# Regular-season OVA tournaments are found automatically.
+# Use this file for things OVA/timu don't list: exhibitions, Ontario
+# Championships, practices or team events.
 # ------------------------------------------------------------------
 
-tournaments: []
-
-# Example:
-#  - id: "2027-04-ontario-championships"
-#    name: "15U Girls Ontario Championships"
-#    age_group: "15U"
-#    start: "2027-04-24"
-#    end: "2027-04-26"
-#    venue: "EY Centre"
-#    address: "4899 Uplands Dr, Ottawa, ON"
-#    notes: "Hotel block info from the coach."
-#    links:
-#      ova: "https://www.ontariovolleyball.org/ocs-schedules"
+tournaments:
+  - id: "2026-11-07-cambridge-exhibition"
+    name: "Exhibition – Cambridge"
+    age_group: "TLS"
+    division: "Exhibition (not OVA)"
+    start: "2026-11-07"
+    first_match: "09:00"
+    venue: "Jacob Hespeler Secondary School"
+    address: "355 Holiday Inn Dr, Cambridge, ON"
+    notes: >-
+      Exhibition matches to prepare for OVA play. 4 guaranteed 2-straight
+      matches to 25 (possibly 5). Referees provided, unlimited subs, no
+      playoffs or awards. Play 9:00 am to about 4–5 pm (morning/afternoon
+      waves if needed). Cafeteria on site; 4 courts; 2 min off the 401.

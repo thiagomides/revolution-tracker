@@ -44,10 +44,16 @@ ova_events:
   titles:
     - "^TLS Girls Division 1 "    # add "^15U Girls Division 1 " if the team also plays up in 15U
     - "^15U Girls Division 2 "
-
+    
 # OVA team rankings (posted after each regular-season event)
+# Hidden from the parents' page at the coach's request. Still checked, and shown
+# on a separate unlisted page only you know about:
+#   https://thiagomides.github.io/revolution-tracker/<private_page>
+# Unlisted ≠ password-protected: the repo is public, so anyone reading this file could find it.
 rankings:
   enabled: true
+  show_on_main_page: false
+  private_page: "r-f6c4ab0f3a.html"
   url: "https://www.ontariovolleyball.org/girls-team-rankings"
 
 # Optional: extra events typed by hand (exhibitions, Ontario Championships, etc.)

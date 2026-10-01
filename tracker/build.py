@@ -586,10 +586,12 @@ def main() -> int:
         log.error("No tournaments found at all – refusing to publish an empty site (keeping the last one).")
         return 1
 
-    changes = detect_changes(ts) + rank_changes
+    rcfg = cfg.get("rankings") or {}
+    show_rank = rcfg.get("show_on_main_page", True)
+    changes = detect_changes(ts) + (rank_changes if show_rank else [])
     digest_text = digest(ts, cfg, today, div_events)
     top = next((e for e in rank_data.get("entries", []) if e.get("rank")), None)
-    if top:
+    if top and show_rank:
         digest_text = digest_text.replace("\n\nFull schedule", f"\n\n📊 OVA ranking: {ordinal(top['rank'])} of {top['of']} ({top['age_group']}, {top['title']})\n\nFull schedule", 1)
 
     SITE.mkdir(exist_ok=True)
@@ -619,11 +621,15 @@ def main() -> int:
         whatsapp="https://wa.me/?text=" + quote(digest_text),
         mailto="mailto:?subject=" + quote(f"{cfg['team']['short_name']} tournament schedule") + "&body=" + quote(digest_text),
         division_events=div_events,
-        ranking=rank_data,
+        ranking=rank_data if show_rank else None,
         ordinal=ordinal,
     )
     tpl = env.get_template("index.html.j2")
     (SITE / "index.html").write_text(tpl.render(standalone=True, **ctx), encoding="utf-8")
+    if not show_rank and rcfg.get("private_page") and rank_data:
+        # Same page with the ranking, at an unlisted address (not linked anywhere, not indexed)
+        (SITE / rcfg["private_page"]).write_text(
+            tpl.render(standalone=True, **{**ctx, "ranking": rank_data, "private": True}), encoding="utf-8")
     if os.environ.get("PREVIEW_OUT"):
         Path(os.environ["PREVIEW_OUT"]).write_text(tpl.render(standalone=False, **ctx), encoding="utf-8")
 
