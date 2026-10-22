@@ -2,7 +2,14 @@
   "588428285": {
     "title": "TLS Girls Division 1 Provincial Cup (Sat OR Sun)",
     "date": "2026-11-14",
-    "splits_posted": false
+    "splits_posted": true,
+    "tier": {
+      "tier": "Trillium H",
+      "day": "2026-11-14",
+      "venue": "Toronto Metropolitan University",
+      "address": "Kerr Hall (379 Victoria Street. Toronto, Ontario. M5B 2K3",
+      "timu_tid": null
+    }
   },
   "588428342": {
     "title": "15U Girls Division 2 Provincial Cup (Sat OR Sun)",
