@@ -573,7 +573,12 @@ def main() -> int:
         t["_status"] = "past" if e < today else ("live" if s <= today <= e else "upcoming")
         t["_days_until"] = (s - today).days
         t["_gcal"] = gcal_link(t, cfg, tz)
-        t["_map"] = gmaps(t["address"]) if t.get("address") else None
+        q = ", ".join(x for x in (t.get("venue"), t.get("address")) if x and x != "TBA")
+        t["_mapq"] = q or None
+        t["_map"] = ("https://www.google.com/maps/dir/?api=1&" + urlencode({"destination": q})) if q else None
+        t["_apple"] = ("https://maps.apple.com/?" + urlencode({"daddr": q})) if q else None
+        t["_waze"] = ("https://waze.com/ul?" + urlencode({"q": q, "navigate": "yes"})) if q else None
+        t["_embed"] = ("https://www.google.com/maps?" + urlencode({"q": q, "output": "embed"})) if q else None
         t["_ics"] = f"events/{t['id']}.ics"
     ts.sort(key=lambda t: t["_start"])
 
@@ -637,7 +642,7 @@ def main() -> int:
         (SITE / rcfg["private_page"]).write_text(
             tpl.render(standalone=True, **{**ctx, "ranking": rank_data, "private": True}), encoding="utf-8")
     if os.environ.get("PREVIEW_OUT"):
-        Path(os.environ["PREVIEW_OUT"]).write_text(tpl.render(standalone=False, **ctx), encoding="utf-8")
+        Path(os.environ["PREVIEW_OUT"]).write_text(tpl.render(standalone=False, preview=True, **ctx), encoding="utf-8")
 
     for w in warnings:
         log.warning(w)

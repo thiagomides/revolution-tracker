@@ -160,6 +160,18 @@ dialog.sheet::backdrop { background: rgb(0 0 0 / .55); }
 .x { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-size: 22px; line-height: 1; cursor: pointer; }
 .x:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (max-width: 520px) { dialog.sheet { width: 100vw; max-width: 100vw; margin: auto 0 0; border-radius: 16px 16px 0 0; max-height: 88dvh; padding-bottom: env(safe-area-inset-bottom, 0px); } }
+.mapcard { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--bg); }
+.map-frame { position: relative; aspect-ratio: 16 / 10; min-height: 180px; max-width: 100%; background: var(--chip); }
+.map-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.map-ph { all: unset; position: absolute; inset: 0; cursor: pointer; display: grid; place-items: center; overflow: hidden; }
+.map-grid { position: absolute; inset: -20%; transform: rotate(-12deg); background-image: linear-gradient(var(--line) 2px, transparent 2px), linear-gradient(90deg, var(--line) 2px, transparent 2px), linear-gradient(transparent 46%, var(--surface) 46%, var(--surface) 54%, transparent 54%), linear-gradient(90deg, transparent 58%, var(--surface) 58%, var(--surface) 64%, transparent 64%); background-size: 38px 38px, 38px 38px, 100% 100%, 100% 100%; opacity: .9; }
+.map-pin { position: relative; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: var(--accent); color: var(--accent-ink); box-shadow: 0 6px 16px rgb(0 0 0 / .25); }
+.map-pin svg { width: 24px; height: 24px; }
+.map-tap { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); white-space: nowrap; }
+.map-ph:focus-visible .map-tap { outline: 2px solid var(--accent); }
+.map-info { padding: 14px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.map-name { font-weight: 700; }
+@media (max-width: 620px) { .mapcard { grid-template-columns: 1fr; } }
 footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-top: 1px solid var(--line); padding-top: 16px; }
 .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: 14px; }
 @media (max-width: 440px) { .item { grid-template-columns: 52px 1fr; gap: 10px; } .date .d { font-size: 24px; } }
@@ -179,6 +191,28 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
 {%- set ico_pin %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg>{% endset %}
 {%- set ico_info %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>{% endset %}
 {%- set ico_link %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>{% endset %}
+{%- macro map_card(t, autoload=false) %}
+{%- if t._mapq %}
+<div class="mapcard">
+  <div class="map-frame" data-embed="{{ t._embed }}"{% if autoload %} data-autoload{% endif %}>
+    <button type="button" class="map-ph" data-loadmap aria-label="Show map of {{ t.venue }}">
+      <span class="map-grid" aria-hidden="true"></span>
+      <span class="map-pin" aria-hidden="true">{{ ico_pin }}</span>
+      <span class="map-tap">Tap to show map</span>
+    </button>
+  </div>
+  <div class="map-info">
+    <div class="map-name">{{ t.venue }}</div>
+    {%- if t.address %}<div class="addr">{{ t.address }}</div>{% endif %}
+    <div class="small-btns">
+      <a class="btn primary" href="{{ t._map }}" target="_blank" rel="noopener">{{ ico_pin }}Google Maps</a>
+      <a class="btn" href="{{ t._apple }}" target="_blank" rel="noopener">Apple Maps</a>
+      <a class="btn" href="{{ t._waze }}" target="_blank" rel="noopener">Waze</a>
+    </div>
+  </div>
+</div>
+{%- endif %}
+{%- endmacro %}
 {%- macro detail_dialog(t, did) %}
 <dialog class="sheet" id="{{ did }}" aria-labelledby="{{ did }}-h">
   <div class="sheet-head">
@@ -197,6 +231,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
       <div><div class="label">Tier</div><div class="v">{{ t.division or 'Posted ~1 month before' }}</div></div>
       <div><div class="label">Venue</div><div class="v">{{ t.venue or 'TBA' }}{% if t.address %}<div class="addr">{{ t.address }}</div>{% endif %}</div></div>
     </div>
+    {%- if t._status != 'past' %}{{ map_card(t) }}{% endif %}
     {%- if t.matches %}
     <div><div class="label">{{ 'Matches' if t._status == 'past' else 'Match schedule' }}</div>{{ matches_table(t) }}</div>
     {%- endif %}
@@ -206,7 +241,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
       <a class="btn primary" href="{{ t._gcal }}" target="_blank" rel="noopener">{{ ico_cal }}Add to Google Calendar</a>
       <a class="btn" href="{{ t._ics }}">{{ ico_cal }}Apple / Outlook</a>
       {%- endif %}
-      {%- if t._map %}<a class="btn" href="{{ t._map }}" target="_blank" rel="noopener">{{ ico_pin }}Directions</a>{% endif %}
+      {%- if t._status == 'past' and t._map %}<a class="btn" href="{{ t._map }}" target="_blank" rel="noopener">{{ ico_pin }}Map</a>{% endif %}
       {%- for label, url in t.links.items() if url %}<a class="btn" href="{{ url }}" target="_blank" rel="noopener">{{ ico_link }}{{ {'ova': 'OVA event page', 'schedule': 'Schedule', 'results': 'Results', 'playoffs': 'Playoffs', 'pools': 'Pools', 'aes': 'Live scores (AES)'}.get(label, label | upper) }}</a>{% endfor %}
     </div>
   </div>
@@ -222,6 +257,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
   {%- endif %}
 {%- endmacro %}
 
+{%- if preview %}<script>window.__PREVIEW = 1;</script>{% endif %}
 <main class="wrap">
   <header class="top">
     <div>
@@ -284,10 +320,10 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
       {%- endif %}
       {{ matches_table(n) }}
       {%- if n.notes %}<div class="meta">{{ n.notes }}</div>{% endif %}
+      {{ map_card(n, autoload=true) }}
       <div class="btns">
         <a class="btn primary" href="{{ n._gcal }}" target="_blank" rel="noopener">{{ ico_cal }}Add to Google Calendar</a>
         <a class="btn" href="{{ n._ics }}">{{ ico_cal }}Apple / Outlook</a>
-        {%- if n._map %}<a class="btn" href="{{ n._map }}" target="_blank" rel="noopener">{{ ico_pin }}Directions</a>{% endif %}
         {%- if n.links.schedule and n.links.playoffs %}
         <a class="btn" href="{{ n.links.schedule }}" target="_blank" rel="noopener">{{ ico_link }}Schedule</a>
         <a class="btn" href="{{ n.links.results }}" target="_blank" rel="noopener">{{ ico_link }}Results</a>
@@ -451,8 +487,26 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
     });
   });
 
+  // Maps: the next-tournament map loads by itself; pop-up maps load when the pop-up opens or on tap.
+  function loadMap(frame) {
+    if (!frame || frame.querySelector("iframe")) return;
+    if (window.__PREVIEW) { var t = frame.querySelector(".map-tap"); if (t) t.textContent = "Live Google map appears here on the real page"; return; }
+    var f = document.createElement("iframe");
+    f.src = frame.dataset.embed; f.loading = "lazy"; f.title = "Map";
+    f.referrerPolicy = "no-referrer-when-downgrade";
+    frame.appendChild(f);
+    var ph = frame.querySelector(".map-ph"); if (ph) ph.hidden = true;
+  }
+  document.querySelectorAll("[data-loadmap]").forEach(function (b) {
+    b.addEventListener("click", function () { loadMap(b.closest(".map-frame")); });
+  });
+  document.querySelectorAll(".map-frame[data-autoload]").forEach(loadMap);
+
   // Tournament pop-ups: tap a card (or its Details button) to open, tap outside / × / Esc to close
-  function openSheet(id) { var d = document.getElementById(id); if (d && d.showModal && !d.open) d.showModal(); }
+  function openSheet(id) {
+    var d = document.getElementById(id);
+    if (d && d.showModal && !d.open) { d.showModal(); loadMap(d.querySelector(".map-frame")); }
+  }
   document.querySelectorAll("[data-open]").forEach(function (el) {
     el.addEventListener("click", function (e) {
       if (el.classList.contains("tap") && e.target.closest("a, button, summary")) return;

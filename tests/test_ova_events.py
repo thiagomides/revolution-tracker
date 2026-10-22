@@ -42,3 +42,11 @@ def test_text_reader_survives_broken_nesting():
     r = ova.parse_event(html, A, "2026-11-14")
     assert r["tier"]["tier"] == "Trillium H"
     assert ova.parse_event_text(html, A, "2026-11-14")["tier"]["venue"] == "Simcoe Composite School"
+
+
+def test_split_location_variants():
+    assert ova.split_location("Huron Heights (40 Huron Heights DR, Newmarket ON L3Y 3J9)") == \
+        ("Huron Heights", "40 Huron Heights DR, Newmarket ON L3Y 3J9")
+    assert ova.split_location("Toronto Metropolitan University (Kerr Hall (379 Victoria Street. Toronto, Ontario. M5B 2K3)") == \
+        ("Toronto Metropolitan University – Kerr Hall", "379 Victoria Street, Toronto, Ontario, M5B 2K3")
+    assert ova.split_location("TBA") == ("TBA", "")

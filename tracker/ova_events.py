@@ -112,6 +112,23 @@ def _day_from(heading: str, event_date: str) -> str | None:
     return d.isoformat()
 
 
+def split_location(loc: str) -> tuple[str, str]:
+    """'School (123 Street, City)' -> ('School', '123 Street, City').
+    Handles OVA's nested form 'University (Kerr Hall (379 Victoria St. Toronto)' too."""
+    loc = re.sub(r"\s+", " ", loc).strip()
+    i = loc.find("(")
+    if i < 0:
+        return loc, ""
+    venue, rest = loc[:i].strip(), loc[i + 1:].strip()
+    rest = re.sub(r"\)+\s*$", "", rest)
+    if "(" in rest:  # extra building name before the street address
+        building, rest = rest.split("(", 1)
+        venue = f"{venue} – {building.strip()}"
+        rest = rest.strip().rstrip(")")
+    address = re.sub(r"\.\s+", ", ", rest).strip(" ,")
+    return venue, address
+
+
 def parse_event_text(page: str, aliases: list[str], event_date: str) -> dict:
     """Layout-independent reading: cut the page at each <h1> and look in that slice only.
     Used when the HTML nesting confuses the structured parser."""
@@ -134,10 +151,7 @@ def parse_event_text(page: str, aliases: list[str], event_date: str) -> dict:
         text = re.sub(r"\s+", " ", htmllib.unescape(re.sub(r"<[^>]+>", " ", body))).replace("\xa0", " ")
         lm = re.search(r"Location:\s*(.*?)\s*(?:Participating Teams|Tournament Notes|$)", text)
         loc = lm.group(1).strip() if lm else ""
-        venue, address = loc, ""
-        vm = re.match(r"(.*?)\s*\((.*)\)\s*$", loc)
-        if vm:
-            venue, address = vm.group(1).strip(), vm.group(2).strip()
+        venue, address = split_location(loc)
         tm = re.search(r"timu\.ca/[^\"']*tid=(\d+)", body)
         return {"splits_posted": True, "tier": {"tier": re.split(r"\s+-\s+", heading)[0].strip(),
                 "day": _day_from(heading, event_date), "venue": venue, "address": address,
@@ -195,10 +209,7 @@ def _parse_event_dom(page: str, aliases: list[str], event_date: str) -> dict:
                 p = h3.find_next("p")
                 loc_txt = p.get_text(" ", strip=True) if p else ""
                 break
-        venue, address = loc_txt, ""
-        lm = re.match(r"(.*?)\s*\((.*)\)\s*$", loc_txt)
-        if lm:
-            venue, address = lm.group(1).strip(), lm.group(2).strip()
+        venue, address = split_location(loc_txt)
         tid = None
         for a in box.find_all("a", href=True):
             tm = re.search(r"timu\.ca/.*tid=(\d+)", a["href"])
