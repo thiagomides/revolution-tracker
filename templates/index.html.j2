@@ -147,6 +147,19 @@ details summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var
 .standings th { text-align: left; font-size: 12px; color: var(--muted); font-weight: 600; padding: 4px 6px 4px 0; }
 .standings td { padding: 6px 6px 6px 0; border-top: 1px solid var(--line); white-space: nowrap; }
 .standings tr.me td { font-weight: 700; color: var(--accent); }
+.tap { cursor: pointer; }
+.tap:hover { border-color: var(--accent); }
+.open { all: unset; cursor: pointer; font: inherit; color: inherit; text-transform: inherit; letter-spacing: inherit; }
+.open:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+dialog.sheet { width: min(600px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--line); border-radius: calc(var(--radius) + 4px); background: var(--surface); color: var(--ink); overflow: auto; }
+dialog.sheet::backdrop { background: rgb(0 0 0 / .55); }
+.sheet-head { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 16px 18px 12px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.sheet-head h3 { font-size: 24px; margin: 4px 0 8px; }
+.sheet-body { padding: 16px 18px 20px; display: grid; gap: 16px; }
+.addr { font-weight: 400; color: var(--muted); font-size: 14px; }
+.x { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-size: 22px; line-height: 1; cursor: pointer; }
+.x:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 520px) { dialog.sheet { width: 100vw; max-width: 100vw; margin: auto 0 0; border-radius: 16px 16px 0 0; max-height: 88dvh; padding-bottom: env(safe-area-inset-bottom, 0px); } }
 footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-top: 1px solid var(--line); padding-top: 16px; }
 .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: 14px; }
 @media (max-width: 440px) { .item { grid-template-columns: 52px 1fr; gap: 10px; } .date .d { font-size: 24px; } }
@@ -164,7 +177,41 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
 </script>
 {%- set ico_cal %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>{% endset %}
 {%- set ico_pin %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg>{% endset %}
+{%- set ico_info %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>{% endset %}
 {%- set ico_link %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>{% endset %}
+{%- macro detail_dialog(t, did) %}
+<dialog class="sheet" id="{{ did }}" aria-labelledby="{{ did }}-h">
+  <div class="sheet-head">
+    <div>
+      <div class="label">{{ t._date_label }}{% if t._status == 'live' %} · Today{% elif t._status == 'upcoming' and t._days_until > 0 %} · in {{ t._days_until }} day{{ 's' if t._days_until != 1 }}{% endif %}</div>
+      <h3 id="{{ did }}-h">{{ t.name }}</h3>
+      <div class="meta"><span class="chip">{{ t.age_group }}</span>{% if t.division %}<span class="chip">{{ t.division }}</span>{% endif %}</div>
+    </div>
+    <button class="x" type="button" data-close aria-label="Close">&times;</button>
+  </div>
+  <div class="sheet-body">
+    {%- if t.placement %}<div class="place">{{ t.placement }}</div>{% endif %}
+    <div class="facts">
+      <div><div class="label">Date</div><div class="v">{{ t._date_label }}</div></div>
+      <div><div class="label">First match</div><div class="v num">{{ t.first_match or ('Posted ~1 week before' if t._status != 'past' else '—') }}</div></div>
+      <div><div class="label">Tier</div><div class="v">{{ t.division or 'Posted ~1 month before' }}</div></div>
+      <div><div class="label">Venue</div><div class="v">{{ t.venue or 'TBA' }}{% if t.address %}<div class="addr">{{ t.address }}</div>{% endif %}</div></div>
+    </div>
+    {%- if t.matches %}
+    <div><div class="label">{{ 'Matches' if t._status == 'past' else 'Match schedule' }}</div>{{ matches_table(t) }}</div>
+    {%- endif %}
+    {%- if t.notes %}<p class="lede">{{ t.notes }}</p>{% endif %}
+    <div class="btns">
+      {%- if t._status != 'past' %}
+      <a class="btn primary" href="{{ t._gcal }}" target="_blank" rel="noopener">{{ ico_cal }}Add to Google Calendar</a>
+      <a class="btn" href="{{ t._ics }}">{{ ico_cal }}Apple / Outlook</a>
+      {%- endif %}
+      {%- if t._map %}<a class="btn" href="{{ t._map }}" target="_blank" rel="noopener">{{ ico_pin }}Directions</a>{% endif %}
+      {%- for label, url in t.links.items() if url %}<a class="btn" href="{{ url }}" target="_blank" rel="noopener">{{ ico_link }}{{ {'ova': 'OVA event page', 'schedule': 'Schedule', 'results': 'Results', 'playoffs': 'Playoffs', 'pools': 'Pools', 'aes': 'Live scores (AES)'}.get(label, label | upper) }}</a>{% endfor %}
+    </div>
+  </div>
+</dialog>
+{%- endmacro %}
 {%- macro matches_table(t) %}
   {%- if t.matches %}
   <table class="matches num">
@@ -326,10 +373,10 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
     <h2>Season schedule</h2>
     <div class="list">
       {%- for t in upcoming %}
-      <article class="item">
+      <article class="item tap" data-open="d-up-{{ loop.index }}">
         <div class="date num"><div class="m">{{ t._start.strftime('%b') }}</div><div class="d">{{ t._start.day }}</div></div>
         <div class="item-main">
-          <h3>{{ t.name }}</h3>
+          <h3><button type="button" class="open" data-open="d-up-{{ loop.index }}">{{ t.name }}</button></h3>
           <div class="meta">
             <span class="chip {{ 'live' if t._status == 'live' }}">{{ 'Today' if t._status == 'live' else t.age_group }}</span>
             {%- if t.division %}<span class="chip">{{ t.division }}</span>{% endif %}
@@ -337,8 +384,8 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
             <span>{{ t.venue or 'Venue TBA' }}</span>
             {%- if t.first_match %}<span class="num">First match {{ t.first_match }}</span>{% endif %}
           </div>
-          {%- if t.matches %}<details><summary>Match schedule</summary>{{ matches_table(t) }}</details>{% endif %}
           <div class="small-btns">
+            <button type="button" class="btn" data-open="d-up-{{ loop.index }}">{{ ico_info }}Details</button>
             <a class="btn" href="{{ t._gcal }}" target="_blank" rel="noopener">{{ ico_cal }}Google</a>
             <a class="btn" href="{{ t._ics }}">{{ ico_cal }}.ics</a>
             {%- if t._map %}<a class="btn" href="{{ t._map }}" target="_blank" rel="noopener">{{ ico_pin }}Map</a>{% endif %}
@@ -346,6 +393,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
           </div>
         </div>
       </article>
+      {{ detail_dialog(t, 'd-up-' ~ loop.index) }}
       {%- endfor %}
     </div>
   </section>
@@ -355,16 +403,16 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
     <h2>Results</h2>
     <div class="list">
       {%- for t in past %}
-      <article class="item">
+      <article class="item tap" data-open="d-past-{{ loop.index }}">
         <div class="date num"><div class="m">{{ t._start.strftime('%b') }}</div><div class="d">{{ t._start.day }}</div></div>
         <div class="item-main">
-          <h3>{{ t.name }}</h3>
-          <div class="meta"><span class="chip">{{ t.age_group }}</span>{% if t.division %}<span class="chip">{{ t.division }}</span>{% endif %}<span>{{ t.venue }}</span></div>
+          <h3><button type="button" class="open" data-open="d-past-{{ loop.index }}">{{ t.name }}</button></h3>
+          <div class="meta"><span class="chip">{{ t.age_group }}</span><span>{{ t._date_label }}</span>{% if t.division %}<span class="chip">{{ t.division }}</span>{% endif %}<span>{{ t.venue }}</span></div>
           {%- if t.placement %}<div class="place">{{ t.placement }}</div>{% endif %}
-          {%- if t.matches %}<details><summary>Matches</summary>{{ matches_table(t) }}</details>{% endif %}
-          {%- if t.links.results %}<div class="small-btns"><a class="btn" href="{{ t.links.results }}" target="_blank" rel="noopener">{{ ico_link }}Full results</a></div>{% endif %}
+          <div class="small-btns"><button type="button" class="btn" data-open="d-past-{{ loop.index }}">{{ ico_info }}Matches &amp; details</button>{% if t.links.results %}<a class="btn" href="{{ t.links.results }}" target="_blank" rel="noopener">{{ ico_link }}Full results</a>{% endif %}</div>
         </div>
       </article>
+      {{ detail_dialog(t, 'd-past-' ~ loop.index) }}
       {%- endfor %}
     </div>
   </section>
@@ -400,6 +448,21 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
         var s = getSelection(); s.removeAllRanges(); s.addRange(r); say("Selected. Press Copy on your device.");
       }
       if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { say("Copied"); }, fallback); else fallback();
+    });
+  });
+
+  // Tournament pop-ups: tap a card (or its Details button) to open, tap outside / × / Esc to close
+  function openSheet(id) { var d = document.getElementById(id); if (d && d.showModal && !d.open) d.showModal(); }
+  document.querySelectorAll("[data-open]").forEach(function (el) {
+    el.addEventListener("click", function (e) {
+      if (el.classList.contains("tap") && e.target.closest("a, button, summary")) return;
+      e.stopPropagation();
+      openSheet(el.dataset.open);
+    });
+  });
+  document.querySelectorAll("dialog.sheet").forEach(function (d) {
+    d.addEventListener("click", function (e) {
+      if (e.target === d || e.target.closest("[data-close]")) d.close();
     });
   });
 

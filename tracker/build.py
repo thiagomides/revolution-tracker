@@ -246,12 +246,16 @@ def collect_ova(cfg: dict, today: date) -> tuple[list[dict], list[str]]:
                 if done and e["date"] < (today - timedelta(days=3)).isoformat():
                     continue  # finished and recorded – no need to fetch again
                 entry = {**old, "title": e["title"], "date": e["date"]}
-                page = ova_events._get(client, f"{ova_events.BASE}/event/show/{e['id']}")
+                page = ova_events._get(client, f"{ova_events.BASE}/event/show/{e['id']}?_={int(time.time())}")
                 time.sleep(0.5)
+                if not page:
+                    warnings.append(f"Couldn't open the OVA page for {ova_events.clean_title(e['title'])} – will retry")
                 if page:
                     try:
                         parsed = ova_events.parse_event(page, aliases, e["date"])
                         entry["splits_posted"] = parsed["splits_posted"]
+                        log.info("OVA %s: splits_posted=%s tier=%s (%d bytes)", e["title"], parsed["splits_posted"],
+                                 (parsed["tier"] or {}).get("tier"), len(page))
                         if parsed["tier"]:
                             entry["tier"] = parsed["tier"]
                     except Exception as ex:

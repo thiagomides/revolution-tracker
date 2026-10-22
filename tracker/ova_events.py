@@ -98,8 +98,68 @@ def _norm(s: str) -> str:
     return re.sub(r"[^a-z0-9]", "", s.lower())
 
 
+def _day_from(heading: str, event_date: str) -> str | None:
+    dm = _DAY.search(heading)
+    if not dm:
+        return None
+    base = date.fromisoformat(event_date)
+    try:
+        d = datetime.strptime(f"{dm.group(2)} {dm.group(3)} {base.year}", "%B %d %Y").date()
+    except ValueError:
+        return None
+    if abs((d - base).days) > 180:
+        d = d.replace(year=base.year + 1)
+    return d.isoformat()
+
+
+def parse_event_text(page: str, aliases: list[str], event_date: str) -> dict:
+    """Layout-independent reading: cut the page at each <h1> and look in that slice only.
+    Used when the HTML nesting confuses the structured parser."""
+    wanted = [_norm(a) for a in aliases]
+    parts = re.split(r"<h1[^>]*>", page)[1:]
+    splits_posted = False
+    for part in parts:
+        head_html, _, body = part.partition("</h1>")
+        heading = htmllib.unescape(re.sub(r"<[^>]+>", " ", head_html)).replace("\xa0", " ")
+        heading = re.sub(r"\s+", " ", heading).strip()
+        if not heading or heading.lower() == "event":
+            continue
+        cells = [htmllib.unescape(re.sub(r"<[^>]+>", " ", c)).replace("\xa0", " ").strip()
+                 for c in re.findall(r"<(?:td|li)[^>]*>(.*?)</(?:td|li)>", body, re.S)]
+        names = [re.sub(r"\s+", " ", c) for c in cells if c and not c.strip().isdigit()]
+        if any(n.lower() != "team name" for n in names):
+            splits_posted = True
+        if not any(_norm(n) in wanted for n in names):
+            continue
+        text = re.sub(r"\s+", " ", htmllib.unescape(re.sub(r"<[^>]+>", " ", body))).replace("\xa0", " ")
+        lm = re.search(r"Location:\s*(.*?)\s*(?:Participating Teams|Tournament Notes|$)", text)
+        loc = lm.group(1).strip() if lm else ""
+        venue, address = loc, ""
+        vm = re.match(r"(.*?)\s*\((.*)\)\s*$", loc)
+        if vm:
+            venue, address = vm.group(1).strip(), vm.group(2).strip()
+        tm = re.search(r"timu\.ca/[^\"']*tid=(\d+)", body)
+        return {"splits_posted": True, "tier": {"tier": re.split(r"\s+-\s+", heading)[0].strip(),
+                "day": _day_from(heading, event_date), "venue": venue, "address": address,
+                "timu_tid": tm.group(1) if tm else None}}
+    return {"splits_posted": splits_posted, "tier": None}
+
+
 def parse_event(page: str, aliases: list[str], event_date: str) -> dict:
-    """Return {"splits_posted": bool, "tier": {...} | None} for our team."""
+    """Return {"splits_posted": bool, "tier": {...} | None} for our team.
+    Tries the structured parser first, then the slice-by-heading reader."""
+    try:
+        r = _parse_event_dom(page, aliases, event_date)
+    except Exception as e:  # noqa: BLE001
+        log.warning("structured OVA parse failed: %s", e)
+        r = {"splits_posted": False, "tier": None}
+    if r["tier"]:
+        return r
+    alt = parse_event_text(page, aliases, event_date)
+    return alt if (alt["tier"] or alt["splits_posted"]) else r
+
+
+def _parse_event_dom(page: str, aliases: list[str], event_date: str) -> dict:
     soup = BeautifulSoup(page, "html.parser")
     wanted = [_norm(a) for a in aliases]
     splits_posted = False

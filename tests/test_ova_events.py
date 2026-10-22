@@ -27,3 +27,18 @@ def test_event_splits_not_posted():
     r = ova.parse_event((FIX / "ova_event_pending.html").read_text(), A, "2026-11-14")
     assert r == {"splits_posted": False, "tier": None}
     assert ova.clean_title("TLS Girls Division 1 Challenge Cup (Sat Or Sun)") == "TLS Girls Division 1 Challenge Cup"
+
+
+def test_2026_layout_trillium_h():
+    r = ova.parse_event((FIX / "ova_event_2026_trillium_h.html").read_text(), A, "2026-11-14")
+    t = r["tier"]
+    assert t["tier"] == "Trillium H" and t["day"] == "2026-11-14"
+    assert t["venue"] == "Simcoe Composite School" and t["address"].startswith("40 Wilson Drive")
+
+
+def test_text_reader_survives_broken_nesting():
+    # Stray </div> right before the heading breaks the layoutContainer nesting
+    html = (FIX / "ova_event_2026_trillium_h.html").read_text().replace("<h1>", "</div></div></div><h1>", 1)
+    r = ova.parse_event(html, A, "2026-11-14")
+    assert r["tier"]["tier"] == "Trillium H"
+    assert ova.parse_event_text(html, A, "2026-11-14")["tier"]["venue"] == "Simcoe Composite School"
