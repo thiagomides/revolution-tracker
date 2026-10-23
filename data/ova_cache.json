@@ -59,7 +59,14 @@
   "588428332": {
     "title": "15U Girls Division 1 Provincial Cup (Sat OR Sun)",
     "date": "2026-11-21",
-    "splits_posted": false
+    "splits_posted": true,
+    "tier": {
+      "tier": "Trillium F",
+      "day": null,
+      "venue": "St. Ignatius of Loyola CHS",
+      "address": "1550 Nottinghill Gate, Oakville, ON L6M 1S2",
+      "timu_tid": null
+    }
   },
   "588432498": {
     "title": "15U Girls Division 1 Challenge Cup (Sat OR Sun)",
