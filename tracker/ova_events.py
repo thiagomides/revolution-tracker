@@ -91,7 +91,8 @@ def list_events(client: httpx.Client, calendar_id: str, season_start: str, patte
 
 
 # ------------------------------------------------------------------ event page
-_DAY = re.compile(r"(Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day\s+([A-Z][a-z]+)\s+(\d{1,2})", re.I)
+# "Saturday November 14", "Sunday, November 22nd", "Sat. Nov 14th"
+_DAY = re.compile(r"(Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*\.?,?\s+([A-Z][a-z]+)\.?\s+(\d{1,2})(?:st|nd|rd|th)?\b", re.I)
 
 
 def _norm(s: str) -> str:
@@ -103,9 +104,14 @@ def _day_from(heading: str, event_date: str) -> str | None:
     if not dm:
         return None
     base = date.fromisoformat(event_date)
-    try:
-        d = datetime.strptime(f"{dm.group(2)} {dm.group(3)} {base.year}", "%B %d %Y").date()
-    except ValueError:
+    d = None
+    for fmt in ("%B %d %Y", "%b %d %Y"):
+        try:
+            d = datetime.strptime(f"{dm.group(2)} {dm.group(3)} {base.year}", fmt).date()
+            break
+        except ValueError:
+            continue
+    if d is None:
         return None
     if abs((d - base).days) > 180:
         d = d.replace(year=base.year + 1)
@@ -192,17 +198,7 @@ def _parse_event_dom(page: str, aliases: list[str], event_date: str) -> dict:
         if not any(_norm(n) in wanted for n in names):
             continue
         tier = re.split(r"\s+-\s+", heading)[0].strip()
-        day = None
-        dm = _DAY.search(heading)
-        if dm:
-            base = date.fromisoformat(event_date)
-            try:
-                d = datetime.strptime(f"{dm.group(2)} {dm.group(3)} {base.year}", "%B %d %Y").date()
-                if abs((d - base).days) > 180:  # event spans new year
-                    d = d.replace(year=base.year + 1)
-                day = d.isoformat()
-            except ValueError:
-                pass
+        day = _day_from(heading, event_date)
         loc_txt = ""
         for h3 in box.find_all("h3"):
             if "location" in h3.get_text().lower():
