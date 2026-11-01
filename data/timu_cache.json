@@ -1,5 +1,31 @@
 {
-  "_upcoming": [],
+  "_upcoming": [
+    {
+      "tid": "4302",
+      "title": "15U Girls Provincial Cup Select B",
+      "date": "2026-11-22"
+    },
+    {
+      "tid": "4305",
+      "title": "15U Girls Provincial Cup Select E",
+      "date": "2026-11-22"
+    },
+    {
+      "tid": "4301",
+      "title": "15U Girls Provincial Cup Select A",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4303",
+      "title": "15U Girls Provincial Cup Select C",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4304",
+      "title": "15U Girls Provincial Cup Select D",
+      "date": "2026-11-21"
+    }
+  ],
   "4067": null,
   "4069": null,
   "4073": null,
@@ -491,5 +517,10 @@
     },
     "source": "timu"
   },
-  "3321": null
+  "3321": null,
+  "4302": null,
+  "4305": null,
+  "4301": null,
+  "4303": null,
+  "4304": null
 }
