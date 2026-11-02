@@ -235,11 +235,28 @@
   "ova-588428285": {
     "start": "2026-11-14",
     "end": "2026-11-14",
-    "first_match": null,
+    "first_match": "09:00",
     "venue": "Toronto Metropolitan University \u2013 Kerr Hall",
     "address": "379 Victoria Street, Toronto, Ontario, M5B 2K3",
     "placement": null,
-    "matches": null
+    "matches": [
+      {
+        "time": "then",
+        "court": "Court 3",
+        "opponent": "Unity Amethyst",
+        "round": "Pool play",
+        "role": "play",
+        "result": "Split 0-0"
+      },
+      {
+        "time": "then",
+        "court": "Court 3",
+        "opponent": "Titans Velocity",
+        "round": "Pool play",
+        "role": "play",
+        "result": "Split 0-0"
+      }
+    ]
   },
   "ova-588428332": {
     "start": "2026-11-22",

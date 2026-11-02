@@ -8,7 +8,43 @@
       "day": "2026-11-14",
       "venue": "Toronto Metropolitan University \u2013 Kerr Hall",
       "address": "379 Victoria Street, Toronto, Ontario, M5B 2K3",
-      "timu_tid": null
+      "timu_tid": "4314"
+    },
+    "team": {
+      "id": "timu-4314",
+      "name": "TLS Girls Provincial Cup",
+      "age_group": "TLS",
+      "division": "Trillium H",
+      "start": "2026-11-14",
+      "end": "2026-11-14",
+      "first_match": "09:00",
+      "venue": "Toronto Metropolitan University",
+      "address": "379 Victoria St, Toronto, ON M5B 0A1",
+      "team_seed": "Markham Revolution FORCE",
+      "placement": null,
+      "matches": [
+        {
+          "time": "then",
+          "court": "Court 3",
+          "opponent": "Unity Amethyst",
+          "round": "Pool play",
+          "role": "play",
+          "result": "Split 0-0"
+        },
+        {
+          "time": "then",
+          "court": "Court 3",
+          "opponent": "Titans Velocity",
+          "round": "Pool play",
+          "role": "play",
+          "result": "Split 0-0"
+        }
+      ],
+      "links": {
+        "schedule": "https://timu.ca/scoreboards/schedule.php?tid=4314",
+        "results": "https://timu.ca/scoreboards/results.php?tid=4314"
+      },
+      "source": "timu"
     }
   },
   "588428342": {

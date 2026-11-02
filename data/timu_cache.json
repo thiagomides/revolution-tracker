@@ -2,28 +2,188 @@
   "_upcoming": [
     {
       "tid": "4302",
-      "title": "15U Girls Provincial Cup Select B",
+      "title": "15U Girls D1 Provincial Cup Select B",
       "date": "2026-11-22"
     },
     {
       "tid": "4305",
-      "title": "15U Girls Provincial Cup Select E",
+      "title": "15U Girls D1 Provincial Cup Select E",
       "date": "2026-11-22"
     },
     {
       "tid": "4301",
-      "title": "15U Girls Provincial Cup Select A",
+      "title": "15U Girls D1 Provincial Cup Select A",
       "date": "2026-11-21"
     },
     {
       "tid": "4303",
-      "title": "15U Girls Provincial Cup Select C",
+      "title": "15U Girls D1 Provincial Cup Select C",
       "date": "2026-11-21"
     },
     {
       "tid": "4304",
-      "title": "15U Girls Provincial Cup Select D",
+      "title": "15U Girls D1 Provincial Cup Select D",
       "date": "2026-11-21"
+    },
+    {
+      "tid": "4315",
+      "title": "TLS Girls D1 Provincial Cup Trillium D",
+      "date": "2026-11-15"
+    },
+    {
+      "tid": "4317",
+      "title": "TLS Girls D1 Provincial Cup Trillium J",
+      "date": "2026-11-15"
+    },
+    {
+      "tid": "4318",
+      "title": "TLS Girls D1 Provincial Cup Trillium K",
+      "date": "2026-11-15"
+    },
+    {
+      "tid": "4320",
+      "title": "TLS Girls D1 Provincial Cup Trillium M",
+      "date": "2026-11-15"
+    },
+    {
+      "tid": "4323",
+      "title": "TLS Girls D1 Provincial Cup Trillium P",
+      "date": "2026-11-15"
+    },
+    {
+      "tid": "4325",
+      "title": "TLS Girls D1 Provincial Cup Trillium R",
+      "date": "2026-11-15"
+    },
+    {
+      "tid": "4331",
+      "title": "TLS Girls D2 Provincial Cup Trillium E",
+      "date": "2026-11-15"
+    },
+    {
+      "tid": "4332",
+      "title": "TLS Girls D2 Provincial Cup Trillium F",
+      "date": "2026-11-15"
+    },
+    {
+      "tid": "4333",
+      "title": "TLS Girls D2 Provincial Cup Trillium F",
+      "date": "2026-11-15"
+    },
+    {
+      "tid": "4336",
+      "title": "TLS Girls D2 Provincial Cup Trillium I",
+      "date": "2026-11-15"
+    },
+    {
+      "tid": "4338",
+      "title": "TLS Girls D2 Provincial Cup Trillium K",
+      "date": "2026-11-15"
+    },
+    {
+      "tid": "4307",
+      "title": "TLS Girls D1 Provincial Cup Trillium A",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4308",
+      "title": "TLS Girls D1 Provincial Cup Trillium B",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4309",
+      "title": "TLS Girls D1 Provincial Cup Trillium C",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4311",
+      "title": "TLS Girls D1 Provincial Cup Trillium E",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4312",
+      "title": "TLS Girls D1 Provincial Cup Trillium F",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4313",
+      "title": "TLS Girls D1 Provincial Cup Trillium G",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4314",
+      "title": "TLS Girls D1 Provincial Cup Trillium H",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4316",
+      "title": "TLS Girls D1 Provincial Cup Trillium I",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4319",
+      "title": "TLS Girls D1 Provincial Cup Trillium L",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4321",
+      "title": "TLS Girls D1 Provincial Cup Trillium N",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4322",
+      "title": "TLS Girls D1 Provincial Cup Trillium O",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4324",
+      "title": "TLS Girls D1 Provincial Cup Trillium Q",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4326",
+      "title": "TLS Girls D1 Provincial Cup Trillium S",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4327",
+      "title": "TLS Girls D2 Provincial Cup Trillium A",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4328",
+      "title": "TLS Girls D2 Provincial Cup Trillium B",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4329",
+      "title": "TLS Girls D2 Provincial Cup Trillium C",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4330",
+      "title": "TLS Girls D2 Provincial Cup Trillium D",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4334",
+      "title": "TLS Girls D2 Provincial Cup Trillium G",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4335",
+      "title": "TLS Girls D2 Provincial Cup Trillium H",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4337",
+      "title": "TLS Girls D2 Provincial Cup Trillium J",
+      "date": "2026-11-14"
+    },
+    {
+      "tid": "4339",
+      "title": "TLS Girls D2 Provincial Cup Trillium L",
+      "date": "2026-11-14"
     }
   ],
   "4067": null,
@@ -522,5 +682,72 @@
   "4305": null,
   "4301": null,
   "4303": null,
-  "4304": null
+  "4304": null,
+  "4315": null,
+  "4317": null,
+  "4318": null,
+  "4320": null,
+  "4323": null,
+  "4325": null,
+  "4331": null,
+  "4332": null,
+  "4333": null,
+  "4336": null,
+  "4338": null,
+  "4307": null,
+  "4308": null,
+  "4309": null,
+  "4311": null,
+  "4312": null,
+  "4313": null,
+  "4314": {
+    "id": "timu-4314",
+    "name": "TLS Girls Provincial Cup",
+    "age_group": "TLS",
+    "division": "Trillium H",
+    "start": "2026-11-14",
+    "end": "2026-11-14",
+    "first_match": "09:00",
+    "venue": "Toronto Metropolitan University",
+    "address": "379 Victoria St, Toronto, ON M5B 0A1",
+    "team_seed": "Markham Revolution FORCE",
+    "placement": null,
+    "matches": [
+      {
+        "time": "then",
+        "court": "Court 3",
+        "opponent": "Unity Amethyst",
+        "round": "Pool play",
+        "role": "play",
+        "result": "Split 0-0"
+      },
+      {
+        "time": "then",
+        "court": "Court 3",
+        "opponent": "Titans Velocity",
+        "round": "Pool play",
+        "role": "play",
+        "result": "Split 0-0"
+      }
+    ],
+    "links": {
+      "schedule": "https://timu.ca/scoreboards/schedule.php?tid=4314",
+      "results": "https://timu.ca/scoreboards/results.php?tid=4314"
+    },
+    "source": "timu"
+  },
+  "4316": null,
+  "4319": null,
+  "4321": null,
+  "4322": null,
+  "4324": null,
+  "4326": null,
+  "4327": null,
+  "4328": null,
+  "4329": null,
+  "4330": null,
+  "4334": null,
+  "4335": null,
+  "4337": null,
+  "4339": null
 }
