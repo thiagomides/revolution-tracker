@@ -101,7 +101,43 @@
       "day": "2026-11-22",
       "venue": "St. Ignatius of Loyola CHS",
       "address": "1550 Nottinghill Gate, Oakville, ON L6M 1S2",
-      "timu_tid": null
+      "timu_tid": "4360"
+    },
+    "team": {
+      "id": "timu-4360",
+      "name": "15U Girls Provincial Cup",
+      "age_group": "15U",
+      "division": "Trillium F",
+      "start": "2026-11-22",
+      "end": "2026-11-22",
+      "first_match": "09:00",
+      "venue": "St Ignatius of Loyola CSS",
+      "address": "1550 Nottinghill Gate, Oakville, ON L6M 1S2",
+      "team_seed": "Markham Revolution FORCE",
+      "placement": null,
+      "matches": [
+        {
+          "time": "then",
+          "court": "Court 1",
+          "opponent": "YRV Crush",
+          "round": "Pool play",
+          "role": "play",
+          "result": "Split 0-0"
+        },
+        {
+          "time": "then",
+          "court": "Court 1",
+          "opponent": "MVC Vesuvius",
+          "round": "Pool play",
+          "role": "play",
+          "result": "Split 0-0"
+        }
+      ],
+      "links": {
+        "schedule": "https://timu.ca/scoreboards/schedule.php?tid=4360",
+        "results": "https://timu.ca/scoreboards/results.php?tid=4360"
+      },
+      "source": "timu"
     }
   },
   "588432498": {

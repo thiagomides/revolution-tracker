@@ -26,6 +26,51 @@
       "date": "2026-11-22"
     },
     {
+      "tid": "4360",
+      "title": "15U Girls D1 Provincial Cup Trillium F",
+      "date": "2026-11-22"
+    },
+    {
+      "tid": "4361",
+      "title": "15U Girls D1 Provincial Cup Trillium G",
+      "date": "2026-11-22"
+    },
+    {
+      "tid": "4363",
+      "title": "15U Girls D1 Provincial Cup Trillium I",
+      "date": "2026-11-22"
+    },
+    {
+      "tid": "4366",
+      "title": "15U Girls D2 Provincial Cup Championship B",
+      "date": "2026-11-22"
+    },
+    {
+      "tid": "4368",
+      "title": "15U Girls D2 Provincial Cup Championship D",
+      "date": "2026-11-22"
+    },
+    {
+      "tid": "4371",
+      "title": "15U Girls D2 Provincial Cup Trillium A",
+      "date": "2026-11-22"
+    },
+    {
+      "tid": "4372",
+      "title": "15U Girls D2 Provincial Cup Trillium B",
+      "date": "2026-11-22"
+    },
+    {
+      "tid": "4376",
+      "title": "15U Girls D2 Provincial Cup Trillium E",
+      "date": "2026-11-22"
+    },
+    {
+      "tid": "4377",
+      "title": "15U Girls D2 Provincial Cup Trillium F",
+      "date": "2026-11-22"
+    },
+    {
       "tid": "4301",
       "title": "15U Girls D1 Provincial Cup Select A",
       "date": "2026-11-21"
@@ -68,6 +113,66 @@
     {
       "tid": "4356",
       "title": "15U Girls D1 Provincial Cup Trillium B",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4358",
+      "title": "15U Girls D1 Provincial Cup Trillium D",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4374",
+      "title": "15U Girls D1 Provincial Cup Trillium D",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4359",
+      "title": "15U Girls D1 Provincial Cup Trillium E",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4362",
+      "title": "15U Girls D1 Provincial Cup Trillium H",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4365",
+      "title": "15U Girls D2 Provincial Cup Championship A",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4367",
+      "title": "15U Girls D2 Provincial Cup Championship C",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4369",
+      "title": "15U Girls D2 Provincial Cup Championship E",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4370",
+      "title": "15U Girls D2 Provincial Cup Championship F",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4373",
+      "title": "15U Girls D2 Provincial Cup Trillium C",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4375",
+      "title": "15U Girls D2 Provincial Cup Trillium D",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4378",
+      "title": "15U Girls D2 Provincial Cup Trillium G",
+      "date": "2026-11-21"
+    },
+    {
+      "tid": "4379",
+      "title": "15U Girls D2 Provincial Cup Trillium H",
       "date": "2026-11-21"
     },
     {
@@ -799,5 +904,61 @@
   "4354": null,
   "4357": null,
   "4355": null,
-  "4356": null
+  "4356": null,
+  "4360": {
+    "id": "timu-4360",
+    "name": "15U Girls Provincial Cup",
+    "age_group": "15U",
+    "division": "Trillium F",
+    "start": "2026-11-22",
+    "end": "2026-11-22",
+    "first_match": "09:00",
+    "venue": "St Ignatius of Loyola CSS",
+    "address": "1550 Nottinghill Gate, Oakville, ON L6M 1S2",
+    "team_seed": "Markham Revolution FORCE",
+    "placement": null,
+    "matches": [
+      {
+        "time": "then",
+        "court": "Court 1",
+        "opponent": "YRV Crush",
+        "round": "Pool play",
+        "role": "play",
+        "result": "Split 0-0"
+      },
+      {
+        "time": "then",
+        "court": "Court 1",
+        "opponent": "MVC Vesuvius",
+        "round": "Pool play",
+        "role": "play",
+        "result": "Split 0-0"
+      }
+    ],
+    "links": {
+      "schedule": "https://timu.ca/scoreboards/schedule.php?tid=4360",
+      "results": "https://timu.ca/scoreboards/results.php?tid=4360"
+    },
+    "source": "timu"
+  },
+  "4361": null,
+  "4363": null,
+  "4366": null,
+  "4368": null,
+  "4371": null,
+  "4372": null,
+  "4376": null,
+  "4377": null,
+  "4358": null,
+  "4374": null,
+  "4359": null,
+  "4362": null,
+  "4365": null,
+  "4367": null,
+  "4369": null,
+  "4370": null,
+  "4373": null,
+  "4375": null,
+  "4378": null,
+  "4379": null
 }

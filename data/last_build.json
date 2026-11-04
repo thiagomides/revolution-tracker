@@ -261,11 +261,28 @@
   "ova-588428332": {
     "start": "2026-11-22",
     "end": "2026-11-22",
-    "first_match": null,
+    "first_match": "09:00",
     "venue": "St. Ignatius of Loyola CHS",
     "address": "1550 Nottinghill Gate, Oakville, ON L6M 1S2",
     "placement": null,
-    "matches": null
+    "matches": [
+      {
+        "time": "then",
+        "court": "Court 1",
+        "opponent": "YRV Crush",
+        "round": "Pool play",
+        "role": "play",
+        "result": "Split 0-0"
+      },
+      {
+        "time": "then",
+        "court": "Court 1",
+        "opponent": "MVC Vesuvius",
+        "round": "Pool play",
+        "role": "play",
+        "result": "Split 0-0"
+      }
+    ]
   },
   "ova-588431221": {
     "start": "2026-12-12",
