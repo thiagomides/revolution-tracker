@@ -176,11 +176,6 @@
       "date": "2026-11-21"
     },
     {
-      "tid": "4341",
-      "title": "TLS Girls D1 Provincial Cup Grand Prix",
-      "date": "2026-11-15"
-    },
-    {
       "tid": "4315",
       "title": "TLS Girls D1 Provincial Cup Trillium D",
       "date": "2026-11-15"
@@ -203,6 +198,11 @@
     {
       "tid": "4323",
       "title": "TLS Girls D1 Provincial Cup Trillium P",
+      "date": "2026-11-15"
+    },
+    {
+      "tid": "4341",
+      "title": "TLS Girls D1 Provincial Cup Trillium R",
       "date": "2026-11-15"
     },
     {
