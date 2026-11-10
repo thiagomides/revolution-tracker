@@ -31,7 +31,7 @@
       "date": "2026-11-22"
     },
     {
-      "tid": "4361",
+      "tid": "4420",
       "title": "15U Girls D1 Provincial Cup Trillium G",
       "date": "2026-11-22"
     },
@@ -126,7 +126,7 @@
       "date": "2026-11-21"
     },
     {
-      "tid": "4359",
+      "tid": "4419",
       "title": "15U Girls D1 Provincial Cup Trillium E",
       "date": "2026-11-21"
     },
@@ -156,12 +156,12 @@
       "date": "2026-11-21"
     },
     {
-      "tid": "4373",
+      "tid": "4421",
       "title": "15U Girls D2 Provincial Cup Trillium C",
       "date": "2026-11-21"
     },
     {
-      "tid": "4375",
+      "tid": "4422",
       "title": "15U Girls D2 Provincial Cup Trillium D",
       "date": "2026-11-21"
     },
@@ -961,5 +961,9 @@
   "4375": null,
   "4378": null,
   "4379": null,
-  "4387": null
+  "4387": null,
+  "4420": null,
+  "4419": null,
+  "4421": null,
+  "4422": null
 }
