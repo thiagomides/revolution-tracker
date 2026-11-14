@@ -300,6 +300,12 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
           <div class="live-big">vs {{ n.live.next.opponent }}</div>
           <div class="meta">{% if n.live.next.time %}<span class="num">{{ n.live.next.time }}</span>{% endif %}{% if n.live.next.court and n.live.next.court not in (n.live.next.time or '') %}<span>{{ n.live.next.court }}</span>{% endif %}<span>{{ n.live.next.round }}</span></div>
         </div>
+        {%- elif n.live.waiting_playoffs %}
+        <div class="live-next">
+          <div class="label">Next match</div>
+          <div class="live-big">Playoffs: waiting for the bracket</div>
+          <div class="meta"><span>Pool play is done. Our playoff match appears here once timu fills in the bracket.</span></div>
+        </div>
         {%- endif %}
         {%- if n.live.last %}
         <div class="meta"><span class="label">Last</span><span class="res {{ 'w' if n.live.last.won }}">{{ n.live.last.label }} {{ n.live.last.score }}</span><span>vs {{ n.live.last.opponent }}</span><span class="num">({{ n.live.last.sets }})</span></div>
@@ -315,6 +321,21 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
         </table>
         </div>
         {%- endif %}
+        {%- if n.live.bracket %}
+        <div>
+          <div class="label">Playoffs</div>
+          <table class="matches num">
+            {%- for b in n.live.bracket %}
+            <tr><td class="wide">{{ b.when or ('Done' if b.played else 'Next') }}</td><td>{{ b.court }}</td><td>vs {{ b.opponent }}</td>{% if b.score %}<td class="res">{{ b.score }}</td>{% endif %}</tr>
+            {%- endfor %}
+          </table>
+        </div>
+        {%- endif %}
+        <div class="small-btns">
+          {%- if n.links.playoffs %}<a class="btn" href="{{ n.links.playoffs }}" target="_blank" rel="noopener">{{ ico_link }}Playoff bracket</a>{% endif %}
+          {%- if n.links.results %}<a class="btn" href="{{ n.links.results }}" target="_blank" rel="noopener">{{ ico_link }}Live scores</a>{% endif %}
+          {%- if n.links.schedule %}<a class="btn" href="{{ n.links.schedule }}" target="_blank" rel="noopener">{{ ico_link }}Schedule</a>{% endif %}
+        </div>
         <p class="lede">This page refreshes about every 10 minutes on tournament days. For up-to-the-second scores, use the timu buttons.</p>
       </div>
       {%- endif %}

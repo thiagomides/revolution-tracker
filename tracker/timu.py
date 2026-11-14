@@ -333,6 +333,12 @@ def parse_playoffs(page: str) -> list[dict]:
             cur["score"] = txt
         elif "team-bot" in cls and cur:
             cur["bot"] = txt
+            sc = cur["score"]
+            cur["played"] = bool(re.search(r"\d+\s*-\s*\d+", sc))
+            tm = re.search(r"\d{1,2}:\d{2}\s*[ap]m", sc, re.I)
+            ct = re.search(r"(?:Court|Ct\.?)\s*(\d+)", sc, re.I)
+            cur["when"] = tm.group(0) if tm else ""
+            cur["court"] = f"Court {ct.group(1)}" if ct else ""
             out.append(cur)
             cur = {}
     return out
@@ -399,14 +405,27 @@ def game_day(tid: str, sched: dict, results: list[dict], playoffs: list[dict], a
         nxt = {"opponent": opp, "court": g["court"], "round": "Pool play",
                "time": g["time"] or f"Match {pos} on {g['court']}"}
         break
+    # Our playoff path from the bracket page (names appear there once pool play is decided)
+    bracket = []
+    for m in playoffs:
+        names = (_norm(m["top"]), _norm(m["bot"]))
+        if me not in names:
+            continue
+        opp = m["bot"] if names[0] == me else m["top"]
+        if not opp or re.fullmatch(r"[A-Z]?\d+|[WL]\d+", opp.strip()):
+            opp = "TBD (winner of another match)"
+        score = re.search(r"\d+\s*-\s*\d+(?:\s*,\s*\d+\s*-\s*\d+)*", m["score"])
+        bracket.append({"opponent": opp, "played": m.get("played", False),
+                        "score": score.group(0) if score else "", "when": m.get("when", ""),
+                        "court": m.get("court", "")})
     if not nxt:
-        for m in playoffs:
-            names = (_norm(m["top"]), _norm(m["bot"]))
-            if me in names and not re.search(r"\d", m["score"]):
-                opp = m["bot"] if names[0] == me else m["top"]
-                nxt = {"opponent": opp or "winner of another match", "court": "", "round": "Playoffs", "time": ""}
-                break
+        up = next((b for b in bracket if not b["played"]), None)
+        if up:
+            nxt = {"opponent": up["opponent"], "court": up["court"], "round": "Playoffs", "time": up["when"]}
 
-    return {"team": me_name, "pool": pool,
+    pool_done = bool(pool) and not any(g for g in sched["grid"] if seed in (g["a"], g["b"])
+                                           and _norm(sched["seeds"].get(g["b"] if g["a"] == seed else g["a"], "")) not in played)
+    return {"team": me_name, "pool": pool, "bracket": bracket,
+            "waiting_playoffs": pool_done and not nxt,
             "standings": pool_standings(results, pool) if pool else [],
             "last": last, "next": nxt, "links": page_links(tid)}
