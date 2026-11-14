@@ -255,6 +255,14 @@
         "round": "Pool play",
         "role": "play",
         "result": "L 0-2"
+      },
+      {
+        "time": "",
+        "court": "Court 3",
+        "opponent": "PVC SC Legacy",
+        "round": "Pre 1/4 Final",
+        "role": "play",
+        "result": "L 0-2"
       }
     ]
   },
