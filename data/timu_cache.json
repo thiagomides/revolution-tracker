@@ -746,7 +746,7 @@
     "venue": "Toronto Metropolitan University",
     "address": "379 Victoria St, Toronto, ON M5B 0A1",
     "team_seed": "Markham Revolution FORCE",
-    "placement": null,
+    "placement": "10th+ (Trillium H)",
     "matches": [
       {
         "time": "then",
@@ -763,6 +763,22 @@
         "round": "Pool play",
         "role": "play",
         "result": "L 0-2"
+      },
+      {
+        "time": "",
+        "court": "Court 3",
+        "opponent": "PVC SC Legacy",
+        "round": "Pre 1/4 Final",
+        "role": "play",
+        "result": "L 0-2"
+      },
+      {
+        "time": "",
+        "court": "Court 3",
+        "opponent": "KINETIKA Torque",
+        "round": "Loser - 9th",
+        "role": "play",
+        "result": "L 1-2"
       }
     ],
     "links": {

@@ -238,7 +238,7 @@
     "first_match": "09:00",
     "venue": "Toronto Metropolitan University \u2013 Kerr Hall",
     "address": "379 Victoria Street, Toronto, Ontario, M5B 2K3",
-    "placement": null,
+    "placement": "10th+ (Trillium H)",
     "matches": [
       {
         "time": "then",
@@ -263,6 +263,14 @@
         "round": "Pre 1/4 Final",
         "role": "play",
         "result": "L 0-2"
+      },
+      {
+        "time": "",
+        "court": "Court 3",
+        "opponent": "KINETIKA Torque",
+        "round": "Loser - 9th",
+        "role": "play",
+        "result": "L 1-2"
       }
     ]
   },
