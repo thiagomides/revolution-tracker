@@ -213,6 +213,13 @@ def add_live(ts: list[dict], cfg: dict, today: date) -> int:
                     if view.get(k):
                         t[k] = view[k]
             t["live"] = timu.game_day(tid, sched, results, bracket, aliases)
+            lv = t["live"] or {}
+            log.info("Game day %s: %d results, %d bracket boxes (%d with names), next=%s, ours=%s",
+                     tid, len(results), len(bracket), sum(1 for b in bracket if b["top"] or b["bot"]),
+                     lv.get("next"), lv.get("bracket"))
+            if pp and not bracket:
+                log.info("Playoff page has no bracket boxes yet; classes seen: %s",
+                         sorted(set(re.findall(r'class=["\']([\w -]*team[\w -]*)["\']', pp)))[:15])
             t["live_checked"] = datetime.now(ZoneInfo(cfg["site"]["timezone"])).strftime("%-I:%M %p")
             refreshed += 1
         except Exception as ex:
