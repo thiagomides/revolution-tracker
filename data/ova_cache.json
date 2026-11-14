@@ -28,16 +28,14 @@
           "court": "Court 3",
           "opponent": "Unity Amethyst",
           "round": "Pool play",
-          "role": "play",
-          "result": "Split 0-0"
+          "role": "play"
         },
         {
           "time": "then",
           "court": "Court 3",
           "opponent": "Titans Velocity",
           "round": "Pool play",
-          "role": "play",
-          "result": "Split 0-0"
+          "role": "play"
         }
       ],
       "links": {
@@ -121,16 +119,14 @@
           "court": "Court 1",
           "opponent": "YRV Crush",
           "round": "Pool play",
-          "role": "play",
-          "result": "Split 0-0"
+          "role": "play"
         },
         {
           "time": "then",
           "court": "Court 1",
           "opponent": "MVC Vesuvius",
           "round": "Pool play",
-          "role": "play",
-          "result": "Split 0-0"
+          "role": "play"
         }
       ],
       "links": {
