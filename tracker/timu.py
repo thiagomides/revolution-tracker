@@ -174,6 +174,10 @@ def parse_results(page: str) -> list[dict]:
                 teams.append({"name": name_el.get_text(" ", strip=True), "sets_won": blocks[0] if blocks else "",
                               "scores": [b for b in blocks[1:] if b]})
         if len(teams) == 2:
+            # timu lists upcoming matches as 0-0 cards; only keep matches that have points on the board
+            pts = [x for t in teams for x in t["scores"] if x.isdigit()]
+            if not any(int(x) > 0 for x in pts) and all(t["sets_won"] in ("", "0") for t in teams):
+                continue
             matches.append({"round": re.sub(r"\s*\(.*\)$", "", label), "court": court, "teams": teams})
     return matches
 
