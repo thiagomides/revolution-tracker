@@ -55,3 +55,19 @@ def test_waiting_for_bracket_after_pool():
     pool_only = [r for r in timu.parse_results(PAGE) if r["round"].startswith("Pool")]
     g = timu.game_day("3810", sched, pool_only, [], A)
     assert g["next"] is None and g["waiting_playoffs"] is True
+
+
+def test_finished_after_last_playoff():
+    sched = timu.parse_schedule(PAGE)
+    pool_only = [r for r in timu.parse_results(PAGE) if r["round"].startswith("Pool")]
+    bracket = timu.parse_playoffs('<div class="team-top">Markham Revolution Force</div>'
+                                  '<div class="team-space-border">27-25, 25-23</div><div class="team-bot">PVC SC Legacy</div>')
+    g = timu.game_day("3810", sched, pool_only, bracket, A)
+    assert g["next"] is None and g["finished"] is True and g["waiting_playoffs"] is False
+
+
+def test_bracket_score_from_our_side():
+    b = timu.parse_playoffs('<div class="team-top">KINETIKA Torque</div>'
+                            '<div class="team-space-border">18-25, 25-22, 17-15</div><div class="team-bot">Markham Revolution Force</div>')
+    g = timu.game_day("3810", timu.parse_schedule(PAGE), [], b, A)
+    assert g["bracket"][0]["score"] == "L 25-18, 22-25, 15-17"

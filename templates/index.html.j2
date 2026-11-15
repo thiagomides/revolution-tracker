@@ -300,6 +300,12 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
           <div class="live-big">vs {{ n.live.next.opponent }}</div>
           <div class="meta">{% if n.live.next.time %}<span class="num">{{ n.live.next.time }}</span>{% endif %}{% if n.live.next.court and n.live.next.court not in (n.live.next.time or '') %}<span>{{ n.live.next.court }}</span>{% endif %}<span>{{ n.live.next.round }}</span></div>
         </div>
+        {%- elif n.live.finished %}
+        <div class="live-next">
+          <div class="label">Tournament</div>
+          <div class="live-big">All done for today{% if n.placement %} · {{ n.placement }}{% endif %}</div>
+          <div class="meta"><span>Every match is played. Full scores are below and on timu.</span></div>
+        </div>
         {%- elif n.live.waiting_playoffs %}
         <div class="live-next">
           <div class="label">Next match</div>

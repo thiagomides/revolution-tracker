@@ -415,8 +415,14 @@ def game_day(tid: str, sched: dict, results: list[dict], playoffs: list[dict], a
         if not opp or re.fullmatch(r"[A-Z]?\d+|[WL]\d+", opp.strip()):
             opp = "TBD (winner of another match)"
         score = re.search(r"\d+\s*-\s*\d+(?:\s*,\s*\d+\s*-\s*\d+)*", m["score"])
+        sets = [tuple(map(int, x)) for x in re.findall(r"(\d+)\s*-\s*(\d+)", score.group(0))] if score else []
+        if names[1] == me:  # we're the bottom team: show scores from our side
+            sets = [(b, a) for a, b in sets]
+        won = sum(a > b for a, b in sets)
+        lost = sum(a < b for a, b in sets)
+        shown = (("W " if won > lost else "L ") + ", ".join(f"{a}-{b}" for a, b in sets)) if sets else ""
         bracket.append({"opponent": opp, "played": m.get("played", False),
-                        "score": score.group(0) if score else "", "when": m.get("when", ""),
+                        "score": shown, "when": m.get("when", ""),
                         "court": m.get("court", "")})
     if not nxt:
         up = next((b for b in bracket if not b["played"]), None)
@@ -426,6 +432,7 @@ def game_day(tid: str, sched: dict, results: list[dict], playoffs: list[dict], a
     pool_done = bool(pool) and not any(g for g in sched["grid"] if seed in (g["a"], g["b"])
                                            and _norm(sched["seeds"].get(g["b"] if g["a"] == seed else g["a"], "")) not in played)
     return {"team": me_name, "pool": pool, "bracket": bracket,
-            "waiting_playoffs": pool_done and not nxt,
+            "waiting_playoffs": pool_done and not nxt and not bracket,
+            "finished": pool_done and not nxt and bool(bracket) and all(b["played"] for b in bracket),
             "standings": pool_standings(results, pool) if pool else [],
             "last": last, "next": nxt, "links": page_links(tid)}
