@@ -172,6 +172,10 @@ dialog.sheet::backdrop { background: rgb(0 0 0 / .55); }
 .map-info { padding: 14px; display: grid; gap: 6px; align-content: start; min-width: 0; }
 .map-name { font-weight: 700; }
 @media (max-width: 620px) { .mapcard { grid-template-columns: 1fr; } }
+.videocard { display: grid; gap: 10px; }
+.video-frame { position: relative; aspect-ratio: 16 / 9; max-width: 100%; border-radius: var(--radius); overflow: hidden; background: #000; }
+.video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video-ph { background: linear-gradient(135deg, var(--chip), var(--surface)); }
 footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-top: 1px solid var(--line); padding-top: 16px; }
 .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: 14px; }
 @media (max-width: 440px) { .item { grid-template-columns: 52px 1fr; gap: 10px; } .date .d { font-size: 24px; } }
@@ -190,6 +194,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
 {%- set ico_cal %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>{% endset %}
 {%- set ico_pin %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg>{% endset %}
 {%- set ico_info %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>{% endset %}
+{%- set ico_play %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z" fill="currentColor"/></svg>{% endset %}
 {%- set ico_link %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>{% endset %}
 {%- macro map_card(t, autoload=false) %}
 {%- if t._mapq %}
@@ -213,6 +218,21 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
 </div>
 {%- endif %}
 {%- endmacro %}
+{%- macro video_card(t) %}
+{%- if t.videos %}
+<div class="videocard">
+  {%- if t._video_embed %}
+  <div class="video-frame" data-embed="{{ t._video_embed }}">
+    <button type="button" class="map-ph video-ph" data-loadvideo aria-label="Play match videos">
+      <span class="map-pin" aria-hidden="true">{{ ico_play }}</span>
+      <span class="map-tap">Tap to play match videos</span>
+    </button>
+  </div>
+  {%- endif %}
+  <div class="small-btns"><a class="btn primary" href="{{ t.videos }}" target="_blank" rel="noopener">{{ ico_play }}Watch on YouTube</a></div>
+</div>
+{%- endif %}
+{%- endmacro %}
 {%- macro detail_dialog(t, did) %}
 <dialog class="sheet" id="{{ did }}" aria-labelledby="{{ did }}-h">
   <div class="sheet-head">
@@ -224,13 +244,14 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
     <button class="x" type="button" data-close aria-label="Close">&times;</button>
   </div>
   <div class="sheet-body">
-    {%- if t.placement %}<div class="place">{{ t.placement }}</div>{% endif %}
     <div class="facts">
       <div><div class="label">Date</div><div class="v">{{ t._date_label }}</div></div>
       <div><div class="label">First match</div><div class="v num">{{ t.first_match or ('Posted ~1 week before' if t._status != 'past' else '—') }}</div></div>
       <div><div class="label">Tier</div><div class="v">{{ t.division or 'Posted ~1 month before' }}</div></div>
       <div><div class="label">Venue</div><div class="v">{{ t.venue or 'TBA' }}{% if t.address %}<div class="addr">{{ t.address }}</div>{% endif %}</div></div>
+      {%- if t.placement and placement_mode != 'hidden' %}<div><div class="label">Finish</div><div class="v">{{ t.placement }}</div></div>{% endif %}
     </div>
+    {{ video_card(t) }}
     {%- if t._status != 'past' %}{{ map_card(t) }}{% endif %}
     {%- if t.matches %}
     <div><div class="label">{{ 'Matches' if t._status == 'past' else 'Match schedule' }}</div>{{ matches_table(t) }}</div>
@@ -303,8 +324,8 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
         {%- elif n.live.finished %}
         <div class="live-next">
           <div class="label">Tournament</div>
-          <div class="live-big">All done for today{% if n.placement %} · {{ n.placement }}{% endif %}</div>
-          <div class="meta"><span>Every match is played. Full scores are below and on timu.</span></div>
+          <div class="live-big">All done for today{% if n.placement and placement_mode == 'everywhere' %} · {{ n.placement }}{% endif %}</div>
+          <div class="meta"><span>Every match is played. Great effort, team! Scores are below and on timu.</span></div>
         </div>
         {%- elif n.live.waiting_playoffs %}
         <div class="live-next">
@@ -347,6 +368,7 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
       {%- endif %}
       {{ matches_table(n) }}
       {%- if n.notes %}<div class="meta">{{ n.notes }}</div>{% endif %}
+      {{ video_card(n) }}
       {{ map_card(n, autoload=true) }}
       <div class="btns">
         <a class="btn primary" href="{{ n._gcal }}" target="_blank" rel="noopener">{{ ico_cal }}Add to Google Calendar</a>
@@ -471,8 +493,8 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
         <div class="item-main">
           <h3><button type="button" class="open" data-open="d-past-{{ loop.index }}">{{ t.name }}</button></h3>
           <div class="meta"><span class="chip">{{ t.age_group }}</span><span>{{ t._date_label }}</span>{% if t.division %}<span class="chip">{{ t.division }}</span>{% endif %}<span>{{ t.venue }}</span></div>
-          {%- if t.placement %}<div class="place">{{ t.placement }}</div>{% endif %}
-          <div class="small-btns"><button type="button" class="btn" data-open="d-past-{{ loop.index }}">{{ ico_info }}Matches &amp; details</button>{% if t.links.results %}<a class="btn" href="{{ t.links.results }}" target="_blank" rel="noopener">{{ ico_link }}Full results</a>{% endif %}</div>
+          {%- if t.placement and placement_mode == 'everywhere' %}<div class="place">{{ t.placement }}</div>{% endif %}
+          <div class="small-btns"><button type="button" class="btn" data-open="d-past-{{ loop.index }}">{{ ico_info }}Matches &amp; details</button>{% if t.videos %}<button type="button" class="btn" data-open="d-past-{{ loop.index }}">{{ ico_play }}Videos</button>{% endif %}{% if t.links.results %}<a class="btn" href="{{ t.links.results }}" target="_blank" rel="noopener">{{ ico_link }}Full results</a>{% endif %}</div>
         </div>
       </article>
       {{ detail_dialog(t, 'd-past-' ~ loop.index) }}
@@ -524,6 +546,22 @@ footer { font-size: 13px; color: var(--muted); display: grid; gap: 4px; border-t
     frame.appendChild(f);
     var ph = frame.querySelector(".map-ph"); if (ph) ph.hidden = true;
   }
+  document.querySelectorAll("[data-loadvideo]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var frame = b.closest(".video-frame");
+      if (window.__PREVIEW) { b.querySelector(".map-tap").textContent = "Video plays here on the real page"; return; }
+      var f = document.createElement("iframe");
+      f.src = frame.dataset.embed + (frame.dataset.embed.indexOf("?") < 0 ? "?" : "&") + "autoplay=1&rel=0";
+      f.title = "Match videos"; f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen"; f.allowFullscreen = true;
+      frame.appendChild(f); b.hidden = true;
+    });
+  });
+  document.querySelectorAll("dialog.sheet").forEach(function (d) {
+    d.addEventListener("close", function () {  // stop the video when the pop-up closes
+      d.querySelectorAll(".video-frame iframe").forEach(function (f) { f.remove(); });
+      d.querySelectorAll("[data-loadvideo]").forEach(function (b) { b.hidden = false; });
+    });
+  });
   document.querySelectorAll("[data-loadmap]").forEach(function (b) {
     b.addEventListener("click", function () { loadMap(b.closest(".map-frame")); });
   });

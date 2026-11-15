@@ -1,0 +1,9 @@
+# ------------------------------------------------------------------
+# Match videos (YouTube). One line per tournament:
+#   "YYYY-MM-DD": "YouTube playlist or video link"
+# The date is the tournament day. The link shows as a "Watch on YouTube"
+# button and a player in that tournament's pop-up.
+# Note: anyone with the page link can open these videos.
+# ------------------------------------------------------------------
+videos:
+  "2026-11-14": "https://www.youtube.com/playlist?list=PLMEuu4DHRjso"

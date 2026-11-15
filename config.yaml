@@ -56,6 +56,11 @@ rankings:
   private_page: "r-f6c4ab0f3a.html"
   url: "https://www.ontariovolleyball.org/girls-team-rankings"
 
+# Final placements (e.g. "10th"): "details" = only inside a tournament's pop-up,
+# "hidden" = never shown, "everywhere" = also on the results list and game-day panel.
+results:
+  show_placement: "details"
+
 # Optional: extra events typed by hand (exhibitions, Ontario Championships, etc.)
 # live in data/tournaments.yaml.
 

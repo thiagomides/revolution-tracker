@@ -227,6 +227,25 @@ def add_live(ts: list[dict], cfg: dict, today: date) -> int:
     return refreshed
 
 
+def load_videos() -> dict:
+    """data/videos.yaml: tournament date (YYYY-MM-DD) or id -> YouTube video/playlist link."""
+    p = DATA / "videos.yaml"
+    if not p.exists():
+        return {}
+    raw = load_yaml(p).get("videos") or {}
+    return {str(k): str(v).strip() for k, v in raw.items() if v}
+
+
+def youtube_embed(url: str | None) -> str | None:
+    if not url:
+        return None
+    m = re.search(r"[?&]list=([\w-]+)", url)
+    if m:
+        return f"https://www.youtube-nocookie.com/embed/videoseries?list={m.group(1)}"
+    m = re.search(r"(?:youtu\.be/|v=|/embed/|/live/|/shorts/)([\w-]{11})", url)
+    return f"https://www.youtube-nocookie.com/embed/{m.group(1)}" if m else None
+
+
 def is_regular(title: str) -> bool:
     t = title.lower()
     return any(c.lower() in t for c in ova_events.REGULAR_CUPS) and "non-ova" not in t and "exhibition" not in t
@@ -399,8 +418,10 @@ def describe(t: dict, cfg: dict) -> str:
         when = m.get("time") or ""
         res = f" ({m['result']})" if m.get("result") else ""
         lines.append(" ".join(x for x in (f"• {when}", m.get("court", ""), f"– {who}{res}") if x.strip()))
-    if t.get("placement"):
+    if t.get("placement") and (cfg.get("results") or {}).get("show_placement", "details") == "everywhere":
         lines.append(f"Result: {t['placement']}")
+    if t.get("videos"):
+        lines.append(f"Videos: {t['videos']}")
     if t.get("notes"):
         lines.append(t["notes"])
     for label, url in (t.get("links") or {}).items():
@@ -503,7 +524,7 @@ def detect_changes(ts: list[dict]) -> list[str]:
             if old:
                 changes.append(f"New tournament: {name}")
             continue
-        for field in ("start", "first_match", "venue", "placement"):
+        for field in ("start", "first_match", "venue"):
             if old[tid].get(field) != fp.get(field):
                 changes.append(f"{name}: {field.replace('_', ' ')} → {fp.get(field) or '—'}")
         if old[tid].get("matches") != fp.get("matches") and fp.get("matches"):
@@ -570,6 +591,7 @@ def main() -> int:
         ts.append(t)
     warnings += merge_aes(ts, cfg)
 
+    videos = load_videos()
     for t in ts:
         s = date.fromisoformat(str(t["start"]))
         e = date.fromisoformat(str(t.get("end") or t["start"]))
@@ -587,6 +609,10 @@ def main() -> int:
         t["_waze"] = ("https://waze.com/ul?" + urlencode({"q": q, "navigate": "yes"})) if q else None
         t["_embed"] = ("https://www.google.com/maps?" + urlencode({"q": q, "output": "embed"})) if q else None
         t["_ics"] = f"events/{t['id']}.ics"
+        v = videos.get(str(t["id"])) or videos.get(t["_start"].isoformat())
+        if v:
+            t["videos"] = v
+        t["_video_embed"] = youtube_embed(t.get("videos"))
     ts.sort(key=lambda t: t["_start"])
 
     live_count = add_live(ts, cfg, today)
@@ -639,6 +665,7 @@ def main() -> int:
         whatsapp="https://wa.me/?text=" + quote(digest_text),
         mailto="mailto:?subject=" + quote(f"{cfg['team']['short_name']} tournament schedule") + "&body=" + quote(digest_text),
         division_events=div_events,
+        placement_mode=(cfg.get("results") or {}).get("show_placement", "details"),
         ranking=rank_data if show_rank else None,
         ordinal=ordinal,
     )
