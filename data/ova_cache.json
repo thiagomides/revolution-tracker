@@ -71,7 +71,14 @@
   "588431221": {
     "title": "TLS Girls Division 1 Challenge Cup (Sat OR Sun)",
     "date": "2026-12-12",
-    "splits_posted": true
+    "splits_posted": true,
+    "tier": {
+      "tier": "Trillium G",
+      "day": "2026-12-12",
+      "venue": "Venue Name: Hillfield Strathallan College Venue Address: 299 Fennell Ave. West, Hamilton, ON L9C1G3",
+      "address": "",
+      "timu_tid": null
+    }
   },
   "588432500": {
     "title": "15U Girls Division 2 Challenge Cup (Sat OR Sun)",
