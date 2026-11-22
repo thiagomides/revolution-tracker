@@ -622,9 +622,13 @@ def main() -> int:
             with open(os.environ["GITHUB_OUTPUT"], "a") as f:
                 f.write("publish=false\n")
         return 0
+    # Keep the game-day refresh chain going while today's tournament is still being played
+    now_local = datetime.now(tz)
+    keep_live = any(t.get("live") and not t["live"].get("finished") for t in ts) and 7 <= now_local.hour < 21
     if os.environ.get("GITHUB_OUTPUT"):
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:
             f.write("publish=true\n")
+            f.write(f"keep_live={'true' if keep_live else 'false'}\n")
 
     if not ts and not div_events:
         log.error("No tournaments found at all – refusing to publish an empty site (keeping the last one).")

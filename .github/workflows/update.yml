@@ -9,8 +9,14 @@ on:
   push:
     branches: [main]                # rebuild right after you edit config or tournaments
   workflow_dispatch:                # "Run workflow" button in the Actions tab
+    inputs:
+      live:
+        description: "Game-day quick refresh (only today's tournament)"
+        type: boolean
+        default: false
 
 permissions:
+  actions: write                    # lets a game-day run start the next one
   contents: write                   # save the cache back to the repo
   pages: write
   id-token: write
@@ -42,7 +48,7 @@ jobs:
       - name: Build site
         id: build
         env:
-          LIVE_ONLY: ${{ github.event.schedule == '*/10 12-23 * * 6,0' && '1' || '' }}
+          LIVE_ONLY: ${{ (github.event.schedule == '*/10 12-23 * * 6,0' || inputs.live) && '1' || '' }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
@@ -67,3 +73,14 @@ jobs:
       - if: steps.build.outputs.publish != 'false'
         id: deploy
         uses: actions/deploy-pages@v4
+
+      # GitHub often delays or skips frequent scheduled runs. On game days, each run
+      # waits ~8 minutes after publishing and starts the next one itself, until the
+      # team's last match is done (or 9 pm). Public repo = no cost.
+      - name: Schedule next game-day refresh
+        if: steps.build.outputs.keep_live == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sleep 480
+          gh workflow run update.yml --repo "${{ github.repository }}" --ref main -f live=true
