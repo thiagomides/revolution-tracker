@@ -287,7 +287,8 @@
         "court": "Court 1",
         "opponent": "YRV Crush",
         "round": "Pool play",
-        "role": "play"
+        "role": "play",
+        "result": "L 0-2"
       },
       {
         "time": "then",
