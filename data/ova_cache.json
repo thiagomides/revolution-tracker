@@ -137,7 +137,7 @@
       "venue": "St Ignatius of Loyola CSS",
       "address": "1550 Nottinghill Gate, Oakville, ON L6M 1S2",
       "team_seed": "Markham Revolution FORCE",
-      "placement": null,
+      "placement": "10th+ (Trillium F)",
       "matches": [
         {
           "time": "then",
@@ -162,6 +162,14 @@
           "round": "1/4 Final",
           "role": "play",
           "result": "L 0-2"
+        },
+        {
+          "time": "",
+          "court": "Court 3",
+          "opponent": "EVP Eagles Energy",
+          "round": "Loser - 9th",
+          "role": "play",
+          "result": "L 1-2"
         }
       ],
       "links": {
