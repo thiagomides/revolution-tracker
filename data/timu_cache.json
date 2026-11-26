@@ -1,5 +1,26 @@
 {
-  "_upcoming": [],
+  "_upcoming": [
+    {
+      "tid": "4525",
+      "title": "TLS Girls D1 Challenge Cup Championship A",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4526",
+      "title": "TLS Girls D1 Challenge Cup Championship B",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4527",
+      "title": "TLS Girls D1 Challenge Cup Championship C",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4528",
+      "title": "TLS Girls D1 Challenge Cup Championship D",
+      "date": "2026-12-12"
+    }
+  ],
   "4067": null,
   "4069": null,
   "4073": null,
@@ -667,5 +688,9 @@
   "4419": null,
   "4421": null,
   "4422": null,
-  "4515": null
+  "4515": null,
+  "4525": null,
+  "4526": null,
+  "4527": null,
+  "4528": null
 }
