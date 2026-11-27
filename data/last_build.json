@@ -316,6 +316,30 @@
       }
     ]
   },
+  "timu-4540": {
+    "start": "2026-12-12",
+    "end": "2026-12-12",
+    "first_match": "09:00",
+    "venue": "Hillfield Strathallan College",
+    "address": "299 Fennell Ave W, Hamilton, ON L9C 1G3",
+    "placement": null,
+    "matches": [
+      {
+        "time": "09:00",
+        "court": "Court 2",
+        "opponent": "Smash Raiders Skyline",
+        "round": "Pool play",
+        "role": "play"
+      },
+      {
+        "time": "then",
+        "court": "Court 2",
+        "opponent": "Leaside Nirvana",
+        "round": "Pool play",
+        "role": "play"
+      }
+    ]
+  },
   "ova-588431221": {
     "start": "2026-12-12",
     "end": "2026-12-12",

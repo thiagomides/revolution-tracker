@@ -1,12 +1,27 @@
 {
   "_upcoming": [
     {
+      "tid": "4536",
+      "title": "TLS Girls D1 Challenge Cup Trillium C",
+      "date": "2026-12-13"
+    },
+    {
+      "tid": "4542",
+      "title": "TLS Girls D1 Challenge Cup Trillium I",
+      "date": "2026-12-13"
+    },
+    {
       "tid": "4525",
       "title": "TLS Girls D1 Challenge Cup Championship A",
       "date": "2026-12-12"
     },
     {
       "tid": "4526",
+      "title": "TLS Girls D1 Challenge Cup Championship B",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4552",
       "title": "TLS Girls D1 Challenge Cup Championship B",
       "date": "2026-12-12"
     },
@@ -18,6 +33,136 @@
     {
       "tid": "4528",
       "title": "TLS Girls D1 Challenge Cup Championship D",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4529",
+      "title": "TLS Girls D1 Challenge Cup Championship E",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4530",
+      "title": "TLS Girls D1 Challenge Cup Championship F",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4531",
+      "title": "TLS Girls D1 Challenge Cup Championship G",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4532",
+      "title": "TLS Girls D1 Challenge Cup Championship H",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4533",
+      "title": "TLS Girls D1 Challenge Cup Championship I",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4534",
+      "title": "TLS Girls D1 Challenge Cup Trillium A",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4535",
+      "title": "TLS Girls D1 Challenge Cup Trillium B",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4537",
+      "title": "TLS Girls D1 Challenge Cup Trillium D",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4538",
+      "title": "TLS Girls D1 Challenge Cup Trillium E",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4539",
+      "title": "TLS Girls D1 Challenge Cup Trillium F",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4540",
+      "title": "TLS Girls D1 Challenge Cup Trillium G",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4541",
+      "title": "TLS Girls D1 Challenge Cup Trillium H",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4543",
+      "title": "TLS Girls D1 Challenge Cup Trillium J",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4544",
+      "title": "TLS Girls D1 Challenge Cup Trillium K",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4545",
+      "title": "TLS Girls D1 Challenge Cup Trillium L",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4546",
+      "title": "TLS Girls D2 Challenge Cup Premier A",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4547",
+      "title": "TLS Girls D2 Challenge Cup Premier B",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4548",
+      "title": "TLS Girls D2 Challenge Cup Premier C",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4549",
+      "title": "TLS Girls D2 Challenge Cup Premier D",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4550",
+      "title": "TLS Girls D2 Challenge Cup Premier E",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4551",
+      "title": "TLS Girls D2 Challenge Cup Championship A",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4553",
+      "title": "TLS Girls D2 Challenge Cup Championship C",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4554",
+      "title": "TLS Girls D2 Challenge Cup Championship D",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4555",
+      "title": "TLS Girls D2 Challenge Cup Championship E",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4556",
+      "title": "TLS Girls D2 Challenge Cup Championship F",
+      "date": "2026-12-12"
+    },
+    {
+      "tid": "4557",
+      "title": "TLS Girls D2 Challenge Cup Championship G",
       "date": "2026-12-12"
     }
   ],
@@ -692,5 +837,67 @@
   "4525": null,
   "4526": null,
   "4527": null,
-  "4528": null
+  "4528": null,
+  "4536": null,
+  "4542": null,
+  "4552": null,
+  "4529": null,
+  "4530": null,
+  "4531": null,
+  "4532": null,
+  "4533": null,
+  "4534": null,
+  "4535": null,
+  "4537": null,
+  "4538": null,
+  "4539": null,
+  "4540": {
+    "id": "timu-4540",
+    "name": "TLS Girls Challenge Cup",
+    "age_group": "TLS",
+    "division": "Trillium G",
+    "start": "2026-12-12",
+    "end": "2026-12-12",
+    "first_match": "09:00",
+    "venue": "Hillfield Strathallan College",
+    "address": "299 Fennell Ave W, Hamilton, ON L9C 1G3",
+    "team_seed": "Markham Revolution FORCE",
+    "placement": null,
+    "matches": [
+      {
+        "time": "09:00",
+        "court": "Court 2",
+        "opponent": "Smash Raiders Skyline",
+        "round": "Pool play",
+        "role": "play"
+      },
+      {
+        "time": "then",
+        "court": "Court 2",
+        "opponent": "Leaside Nirvana",
+        "round": "Pool play",
+        "role": "play"
+      }
+    ],
+    "links": {
+      "schedule": "https://timu.ca/scoreboards/schedule.php?tid=4540",
+      "results": "https://timu.ca/scoreboards/results.php?tid=4540"
+    },
+    "source": "timu"
+  },
+  "4541": null,
+  "4543": null,
+  "4544": null,
+  "4545": null,
+  "4546": null,
+  "4547": null,
+  "4548": null,
+  "4549": null,
+  "4550": null,
+  "4551": null,
+  "4553": null,
+  "4554": null,
+  "4555": null,
+  "4556": null,
+  "4557": null
 }
